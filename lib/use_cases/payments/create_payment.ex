@@ -48,8 +48,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
              sale_id: sale_id,
              amount: amount,
              payment_code: payment_code
-           })
-           |> IO.inspect(label: "New Payment"),
+           }),
          {:ok, payment} <- payment_repo.save(payment) do
       {:ok, payment}
     else

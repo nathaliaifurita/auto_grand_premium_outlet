@@ -148,7 +148,7 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
       payment_code = "PAY123"
 
       conn = put(conn, "/api/payments/#{payment_code}/confirm")
-      response = json_response(conn, 200) |> IO.inspect(label: "Confirm Payment Response")
+      response = json_response(conn, 200)
 
       assert response["payment_code"] == payment_code
       assert response["status"] == "paid"

@@ -116,7 +116,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
           year: 2021
         })
 
-      response = json_response(conn, 201) |> IO.inspect(label: "Create Vehicle Response")
+      response = json_response(conn, 201)
 
       assert response["id"] == 2
       assert response["brand"] == "Renault"
@@ -143,7 +143,6 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
     test "GET /api/vehicles returns available vehicles ordered by price", %{conn: conn} do
       conn = get(conn, "/api/vehicles")
       response = json_response(conn, 200)
-      IO.inspect(response, label: "Available Vehicles Response")
 
       assert length(response) == 2
 
