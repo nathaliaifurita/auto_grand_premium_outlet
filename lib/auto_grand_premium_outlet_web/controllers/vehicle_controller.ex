@@ -41,7 +41,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
     end
   end
 
-  ######################### melhoria: normalizar params antes de passar para o use case
+  ######################## melhoria: normalizar params antes de passar para o use case
   # def create(conn, params) do
   #   with {:ok, vehicle} <- CreateVehicle.execute(params) do
   #     conn
@@ -58,6 +58,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
 
   ### melhoria: normalizar params antes de passar para o use case
   defp vehicle_repo do
-    Application.fetch_env!(:auto_grand_premium_outlet, :vehicle_repo)
+    Application.fetch_env!(
+      :auto_grand_premium_outlet,
+      :vehicle_repo
+    )
   end
 end

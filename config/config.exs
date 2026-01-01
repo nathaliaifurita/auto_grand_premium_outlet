@@ -8,7 +8,10 @@
 import Config
 
 config :auto_grand_premium_outlet,
-  ecto_repos: [AutoGrandPremiumOutlet.Repo]
+  ecto_repos: [AutoGrandPremiumOutlet.Repo],
+  vehicle_repo: AutoGrandPremiumOutlet.Infra.Repositories.VehicleRepo,
+  sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepositoryImpl,
+  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepositoryImpl
 
 # Configures the endpoint
 config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,
@@ -21,7 +24,6 @@ config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,
       "swagger" => Path.join(File.cwd!(), "priv/static/swagger.json")
     }
   ]
-
 
 # config :auto_grand_premium_outlet, :phoenix_swagger_ui, swagger_file: "priv/openapi/openapi.yaml"
 

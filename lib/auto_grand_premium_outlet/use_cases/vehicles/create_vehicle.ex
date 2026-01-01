@@ -16,7 +16,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
           {:ok, Vehicle.t()} | {:error, error()}
   def execute(attrs, vehicle_repo) do
     with {:ok, vehicle} <- Vehicle.new(attrs),
-         {:ok, vehicle} <- vehicle_repo.create(vehicle) do
+         {:ok, vehicle} <- vehicle_repo.save(vehicle) do
       {:ok, vehicle}
     else
       {:error, reason} ->
