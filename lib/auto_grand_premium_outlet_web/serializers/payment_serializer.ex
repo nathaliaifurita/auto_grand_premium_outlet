@@ -1,5 +1,4 @@
 defmodule AutoGrandPremiumOutletWeb.PaymentSerializer do
-  alias AutoGrandPremiumOutlet.Domain.Payment
 
   def serialize(payment) do
     %{

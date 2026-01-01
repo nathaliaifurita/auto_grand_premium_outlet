@@ -2,7 +2,6 @@ defmodule AutoGrandPremiumOutletWeb.SaleController do
   use AutoGrandPremiumOutletWeb, :controller
 
   alias AutoGrandPremiumOutlet.UseCases.Sales.CreateSale
-  alias AutoGrandPremiumOutlet.UseCases.Sales.AddVehicleToSale
   alias AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale
   alias AutoGrandPremiumOutlet.UseCases.Sales.CancelSale
   alias AutoGrandPremiumOutletWeb.SaleSerializer

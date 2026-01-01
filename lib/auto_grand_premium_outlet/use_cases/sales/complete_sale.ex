@@ -20,7 +20,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale do
          :ok <- ensure_in_initiated(sale),
          {:ok, vehicle} <-
            vehicle_repo.get(sale.vehicle_id),
-         {:ok, vehicle} <- Vehicle.sell(vehicle),
+         {:ok, _vehicle} <- Vehicle.sell(vehicle),
          {:ok, completed_sale} <- Sale.complete(sale),
          {:ok, saved_sale} <- sale_repo.update(completed_sale) do
       {:ok, saved_sale}
