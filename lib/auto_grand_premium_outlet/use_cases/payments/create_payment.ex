@@ -84,6 +84,6 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
   defp ensure_sale_allows_payment(_),
     do: {:error, :invalid_sale_state}
 
-  defp ensure_sale_allows_payment(_),
-    do: {:error, :persistence_error}
+  # defp ensure_sale_allows_payment(_),
+  #   do: {:error, :persistence_error}
 end

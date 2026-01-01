@@ -15,7 +15,20 @@ config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: AutoGrandPremiumOutletWeb.ErrorView, accepts: ~w(json), layout: false],
   pubsub_server: AutoGrandPremiumOutlet.PubSub,
-  live_view: [signing_salt: "OXCb83Pu"]
+  live_view: [signing_salt: "OXCb83Pu"],
+  phoenix_swagger: [
+    swagger_files: %{
+      "swagger" => Path.join(File.cwd!(), "priv/static/swagger.json")
+    }
+  ]
+
+
+# config :auto_grand_premium_outlet, :phoenix_swagger_ui, swagger_file: "priv/openapi/openapi.yaml"
+
+# config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,
+#   swagger: [
+#     router: AutoGrandPremiumOutletWeb.Router #       Ensure this line is present
+#   ]
 
 # Configures the mailer
 #

@@ -1,5 +1,4 @@
 defmodule AutoGrandPremiumOutletWeb.PaymentSerializer do
-
   def serialize(payment) do
     %{
       id: payment.id,

@@ -25,11 +25,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale do
          {:ok, saved_sale} <- sale_repo.update(completed_sale) do
       {:ok, saved_sale}
     else
-      {:error, :not_found} ->
-        {:error, :sale_not_found}
+      # {:error, :not_found} ->
+      #   {:error, :sale_not_found}
 
-      {:error, :not_found} ->
-        {:error, :vehicle_not_found}
+      # {:error, :not_found} ->
+      #   {:error, :vehicle_not_found}
 
       {:error, :vehicle_already_sold} ->
         {:error, :vehicle_already_sold}

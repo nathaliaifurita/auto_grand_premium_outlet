@@ -1,5 +1,6 @@
 defmodule AutoGrandPremiumOutletWeb.Router do
   use AutoGrandPremiumOutletWeb, :router
+  alias PhoenixSwaggerUI.Plug, as: PhoenixSwaggerUI
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -18,7 +19,6 @@ defmodule AutoGrandPremiumOutletWeb.Router do
 
     scope "/sales" do
       post "/", SaleController, :create
-      # post "/:sale_id/vehicles/:vehicle_id", SaleController, :add_vehicle
       put "/:sale_id/complete", SaleController, :complete
       put "/:sale_id/cancel", SaleController, :cancel
     end
@@ -32,12 +32,6 @@ defmodule AutoGrandPremiumOutletWeb.Router do
     scope "/webhooks" do
       put "/payments/confirm", PaymentWebhookController, :confirm
       put "/payments/cancel", PaymentWebhookController, :cancel
-    end
-
-    scope "/swagger" do
-      forward "/", PhoenixSwaggerUI.Plug,
-        otp_app: :auto_grand_premium_outlet,
-        swagger_file: "openapi/openapi.yaml"
     end
   end
 

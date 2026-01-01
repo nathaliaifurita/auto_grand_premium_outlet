@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  title: Auto Grand Premium Outlet API
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:4000/api"
+
+paths:
+  /vehicles:
+    get:
+      summary: List all vehicles
+      responses:
+        '200':
+          description: List of vehicles
+    post:
+      summary: Create a new vehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                brand:
+                  type: string
+                model:
+                  type: string
+                year:
+                  type: integer
+                color:
+                  type: string
+                price:
+                  type: number
+      responses:
+        '201':
+          description: Vehicle created
+  /vehicles/sold:
+    get:
+      summary: List sold vehicles
+      responses:
+        '200':
+          description: List of sold vehicles
+
+  /sales:
+    post:
+      summary: Create a new sale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer_id:
+                  type: string
+      responses:
+        '201':
+          description: Sale created
+    put:
+      summary: Update a sale (complete/cancel)
+      parameters:
+        - name: sale_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sale updated
+
+  /payments:
+    post:
+      summary: Create payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sale_id:
+                  type: string
+                amount:
+                  type: number
+      responses:
+        '201':
+          description: Payment created
+    put:
+      summary: Confirm or cancel payment
+      parameters:
+        - name: payment_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment updated

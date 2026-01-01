@@ -60,6 +60,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
+config :auto_grand_premium_outlet, :phoenix_swagger,
+  swagger_files: %{
+    "swagger" => Path.join(File.cwd!(), "priv/static/swagger.json")
+  }
+
 config :auto_grand_premium_outlet,
   confirm_payment_use_case: AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment,
   payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepositoryImpl,
