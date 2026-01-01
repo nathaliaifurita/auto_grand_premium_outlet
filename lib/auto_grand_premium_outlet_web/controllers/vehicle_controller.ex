@@ -13,45 +13,6 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
 
   action_fallback AutoGrandPremiumOutletWeb.FallbackController
 
-  # def index(conn, _params) do
-  #   case ListAvailableVehicles.execute(vehicle_repo()) do
-  #     {:ok, vehicles} ->
-  #       json(conn, VehicleSerializer.serialize_many(vehicles))
-
-  #     {:error, reason} ->
-  #       {:error, reason}
-  #   end
-
-  #   case ListSoldVehicles.execute(vehicle_repo()) do
-  #     {:ok, vehicles} ->
-  #       json(conn, VehicleSerializer.serialize_many(vehicles))
-
-  #     {:error, reason} ->
-  #       {:error, reason}
-  #   end
-  # end
-
-  # def index(conn, _params) do
-  #   {:ok, vehicles} =
-  #     ListAvailableVehicles.execute(vehicle_repo())
-
-  #   json(conn, VehicleSerializer.serialize_many(vehicles))
-  # end
-
-  # def index(conn, _params) do
-  #   with {:ok, vehicles} <-
-  #          ListAvailableVehicles.execute(vehicle_repo()) do
-  #     json(conn, VehicleSerializer.serialize(vehicles))
-  #   end
-  # end
-
-  # def sold(conn, _params) do
-  #   with {:ok, vehicles} <-
-  #          ListSoldVehicles.execute(vehicle_repo()) do
-  #     json(conn, VehicleSerializer.serialize(vehicles))
-  #   end
-  # end
-
   def index(conn, _params) do
     with {:ok, vehicles} <-
            ListAvailableVehicles.execute(vehicle_repo()) do

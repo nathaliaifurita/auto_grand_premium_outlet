@@ -25,20 +25,6 @@ defmodule AutoGrandPremiumOutletWeb.SaleController do
     end
   end
 
-  ## -------- ADD VEHICLE --------
-  # POST /api/sales/:sale_id/vehicles/:vehicle_id
-  #   def add_vehicle(conn, %{"sale_id" => sale_id, "vehicle_id" => vehicle_id}) do
-  #     with {:ok, sale} <-
-  #            AddVehicleToSale.execute(
-  #              sale_id,
-  #              vehicle_id,
-  #              sale_repo(),
-  #              vehicle_repo()
-  #            ) do
-  #       json(conn, SaleSerializer.serialize(sale))
-  #     end
-  #   end
-
   ## -------- COMPLETE --------
   # PUT /api/sales/:sale_id/complete
   def complete(conn, %{"sale_id" => sale_id}) do

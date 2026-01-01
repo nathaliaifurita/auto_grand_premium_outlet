@@ -1,36 +1,3 @@
-# defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
-#   use AutoGrandPremiumOutletWeb.ConnCase, async: true
-
-#   alias AutoGrandPremiumOutlet.Domain.Sale
-
-#   #
-#   # -------- MOCKS DEFINIDOS NO TESTE --------
-#   #
-
-#   defmodule SaleRepoMock do
-#     @sale %Sale{
-#       id: "sale-123",
-#       vehicle_id: "vehicle-123",
-#       buyer_cpf: "12345678901",
-#       status: :initiated,
-#       inserted_at: DateTime.utc_now()
-#     }
-
-#     def create(%Sale{} = sale), do: {:ok, %{sale | id: "sale-123"}}
-
-#     def get("sale-123"), do: {:ok, @sale}
-#     def get(_), do: {:error, :sale_not_found}
-
-#     def update(%Sale{} = sale), do: {:ok, sale}
-#   end
-
-#   defmodule VehicleRepoMock do
-#     def get("vehicle-123"), do: {:ok, %{id: "vehicle-123", status: :available}}
-#     def get(_), do: {:error, :vehicle_not_found}
-
-#     def mark_as_sold(_vehicle_id), do: :ok
-#   end
-
 defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
   use AutoGrandPremiumOutletWeb.ConnCase, async: false
 

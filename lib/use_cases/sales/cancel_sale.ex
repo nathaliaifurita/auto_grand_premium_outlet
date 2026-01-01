@@ -56,33 +56,3 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSale do
   defp ensure_cancellable(_),
     do: {:error, :invalid_sale_state}
 end
-
-# defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSale do
-#   @moduledoc """
-#   Cancels a sale if it is in the correct state.
-#   """
-
-#   alias AutoGrandPremiumOutlet.Domain.{Sale, Vehicle}
-#   alias AutoGrandPremiumOutlet.Domain.Repositories.SaleRepository
-
-#   @type error :: :sale_not_found | :invalid_sale_state | :persistence_error
-
-#   @spec execute(String.t(), SaleRepository.t()) ::
-#           {:ok, Sale.t()} | {:error, error()}
-#   def execute(sale_id, sale_repo) do
-#     with {:ok, sale} <- sale_repo.get_by_id(sale_id),
-#          :ok <- ensure_cancelable(sale),
-#          {:ok, cancelled_sale} <- Sale.cancel(sale),
-#          {:ok, saved_sale} <- sale_repo.update(cancelled_sale) do
-#       {:ok, saved_sale}
-#     else
-#       {:error, :not_found} -> {:error, :sale_not_found}
-#       {:error, :invalid_transition} -> {:error, :invalid_sale_state}
-#       {:error, :invalid_sale_state} -> {:error, :invalid_sale_state}
-#       _ -> {:error, :persistence_error}
-#     end
-#   end
-
-#   defp ensure_cancelable(%Sale{status: :initiated}), do: :ok
-#   defp ensure_cancelable(_), do: {:error, :invalid_transition}
-# end

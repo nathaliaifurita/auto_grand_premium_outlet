@@ -65,30 +65,6 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
 
   ## -------- helpers --------
 
-  # defp fetch_sale(sale_id, sale_repo) do
-  #   case sale_repo.get(sale_id) do
-  #     {:ok, sale} -> {:ok, sale}
-  #     {:error, :not_found} -> {:error, :sale_not_found}
-  #   end
-  # end
-
-  # defp ensure_sale_allows_payment(%{status: :completed}),
-  #   do: {:error, :sale_already_completed}
-
-  # defp ensure_sale_allows_payment(%{status: :cancelled}),
-  #   do: {:error, :sale_already_cancelled}
-
-  # defp ensure_sale_allows_payment(%{status: _status}),
-  #   do: {:error, :invalid_sale_state}
-
-  # defp ensure_sale_allows_payment(%{amount: nil} || %{amount: amount}) when is_number(amount) and amount <= 0,
-  #   do: {:error, :invalid_amount}
-
-  # defp ensure_sale_allows_payment(amount) do
-  #   case Payment.validate_amount(amount) do: {:ok} -> :ok; {:error, _} -> {:error, :invalid_amount} end
-
-  ## -------- helpers --------
-
   defp fetch_sale(sale_id, sale_repo) do
     case sale_repo.get(sale_id) do
       {:ok, sale} -> {:ok, sale}

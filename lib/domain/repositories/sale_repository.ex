@@ -9,8 +9,5 @@ defmodule AutoGrandPremiumOutlet.Domain.Repositories.SaleRepository do
   @callback get(String.t()) ::
               {:ok, Sale.t()} | {:error, :not_found}
 
-  # @callback get_by_payment_code(String.t()) ::
-  #             {:ok, Sale.t()} | {:error, :not_found}
-
   @callback update(Sale.t()) :: {:ok, Sale.t()} | {:error, term()}
 end

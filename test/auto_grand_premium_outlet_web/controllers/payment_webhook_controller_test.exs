@@ -109,7 +109,6 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
           "payment_code" => "not-found"
         })
 
-      #   assert conn.status == 404
       assert json_response(conn, 404)["error"] == "payment_not_found"
     end
 

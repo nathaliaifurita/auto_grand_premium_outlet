@@ -1,11 +1,3 @@
-# defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.GetVehicle do
-#     alias AutoGrandPremiumOutlet.Domain.Vehicles.Repositories.VehicleRepository
-
-#     def execute(id, vehicle_repo) do
-#       vehicle_repo.get_by_id(id)
-#     end
-#   end
-
 defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.GetVehicle do
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
