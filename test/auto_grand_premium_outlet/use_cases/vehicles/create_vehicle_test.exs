@@ -79,13 +79,12 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
         price: 10_000,
         license_plate: "AAA0001"
       }
-    
+
       assert {:error, :invalid_year} =
                CreateVehicle.execute(attrs, VehicleRepoMock)
     end
 
     test "returns persistence_error when repo fails" do
-
       attrs = %{
         brand: "Honda",
         model: "Civic",

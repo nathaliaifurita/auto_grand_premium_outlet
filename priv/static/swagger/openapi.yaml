@@ -254,18 +254,26 @@ components:
 
     VehicleInput:
       type: object
-      required: [brand, model, year, color, price]
+      required: [brand, model, year, color, price, license_plate]
       properties:
         brand:
           type: string
+          default: Toyota
         model:
           type: string
+          default: Corolla
         year:
           type: integer
+          default: 2020
         color:
           type: string
+          default: Black
         price:
           type: number
+          default: 25000.00
+        license_plate:
+          type: string
+          default: ABC1D34
 
     Sale:
       type: object
