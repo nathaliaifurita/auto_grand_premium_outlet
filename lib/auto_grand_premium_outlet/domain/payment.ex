@@ -62,11 +62,6 @@ defmodule AutoGrandPremiumOutlet.Domain.Payment do
     do: {:error, :invalid_transition}
 
   ## -------- validations --------
-
-  defp validate_payment_code(code)
-       when is_binary(code) and byte_size(code) > 0,
-       do: :ok
-
   defp validate_amount(amount)
        when is_number(amount) and amount > 0,
        do: :ok

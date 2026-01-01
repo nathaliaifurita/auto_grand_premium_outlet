@@ -66,8 +66,6 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
 
     def get_by_payment_code(_), do: {:error, :payment_not_found}
 
-    def get_by_payment_code("nope"), do: {:error, :payment_not_found}
-
     def update(%Payment{} = payment) do
       {:ok, %Payment{payment | updated_at: DateTime.utc_now()}}
     end

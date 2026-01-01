@@ -3,7 +3,7 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
 
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Sale
-  alias AutoGrandPremiumOutletWeb.SaleSerializer
+  # alias AutoGrandPremiumOutletWeb.SaleSerializer
 
   ## -------- Mocks --------
 

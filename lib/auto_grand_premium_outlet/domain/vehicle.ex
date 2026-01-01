@@ -87,10 +87,6 @@ defmodule AutoGrandPremiumOutlet.Domain.Vehicle do
 
   ## -------- helpers --------
 
-  defp get(map, key, default \\ nil) do
-    Map.get(map, key) || Map.get(map, to_string(key)) || default
-  end
-
   @spec available?(t()) :: boolean()
   def available?(%__MODULE__{status: :sold}), do: false
   def available?(_), do: true
@@ -150,8 +146,6 @@ defmodule AutoGrandPremiumOutlet.Domain.Vehicle do
     Ecto.UUID.generate()
   end
 
-  defp validate_license_plate(_), do: {:error, :invalid_license_plate}
-
   defp maybe_validate_year(nil), do: :ok
   defp maybe_validate_year(year) when is_integer(year) and year >= 1886, do: :ok
   defp maybe_validate_year(_), do: {:error, :invalid_year}
@@ -169,20 +163,4 @@ defmodule AutoGrandPremiumOutlet.Domain.Vehicle do
   end
 
   defp maybe_validate_license_plate(_), do: {:error, :invalid_license_plate}
-
-  defp cast_value(:year, year) when is_binary(year) do
-    case Integer.parse(year) do
-      {int, _} -> int
-      _ -> year
-    end
-  end
-
-  defp cast_value(:price, price) when is_binary(price) do
-    case Integer.parse(price) do
-      {int, _} -> int
-      _ -> price
-    end
-  end
-
-  defp cast_value(_, value), do: value
 end

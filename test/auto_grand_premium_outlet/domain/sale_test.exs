@@ -69,7 +69,7 @@ defmodule AutoGrandPremiumOutlet.Domain.SaleTest do
 
   @now DateTime.utc_now()
 
-  defp build_sale(attrs \\ %{}) do
+  defp build_sale(attrs) do
     %Sale{
       id: Map.get(attrs, :id, "sale-1"),
       vehicle_id: Map.get(attrs, :vehicle_id, "vehicle-1"),

@@ -3,36 +3,6 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
 
   alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
 
-  ## -------- Sale Repo Mock --------
-
-  defmodule SaleRepoMock do
-    def get("sale-1") do
-      {:ok,
-       %Sale{
-         id: "sale-1",
-         vehicle_id: "vehicle-1",
-         buyer_cpf: "12345678901",
-         status: :initiated,
-         inserted_at: DateTime.utc_now(),
-         updated_at: nil
-       }}
-    end
-
-    def get("sale-2") do
-      {:ok,
-       %Sale{
-         id: "sale-2",
-         vehicle_id: "vehicle-2",
-         buyer_cpf: "12345678901",
-         status: :initiated,
-         inserted_at: DateTime.utc_now(),
-         updated_at: nil
-       }}
-    end
-
-    def get(_), do: {:error, :not_found}
-  end
-
   ## -------- Payment Repo Mock --------
 
   defmodule PaymentRepoMock do
@@ -71,6 +41,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
     def update(%Payment{} = payment), do: {:ok, payment}
     def update(_), do: {:error, :persistence_error}
   end
+
+  ## -------- Sale Repo Mock --------
 
   defmodule SaleRepoMock do
     def get("sale-1") do
