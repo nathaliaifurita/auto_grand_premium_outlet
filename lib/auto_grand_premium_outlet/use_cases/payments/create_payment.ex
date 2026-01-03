@@ -15,6 +15,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
     CodeGenerator
   }
 
+  alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
+
   @type error ::
           :invalid_amount
           | :invalid_sale_id
@@ -32,19 +34,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
           CodeGenerator.t()
         ) :: {:ok, Payment.t()} | {:error, error()}
   def execute(params, payment_repo, sale_repo, id_generator, code_generator) do
-    params =
-      for {k, v} <- params, into: %{} do
-        key =
-          case k do
-            k when is_binary(k) -> String.to_existing_atom(k)
-            k -> k
-          end
+    # Normalize parameters (string keys to atoms)
+    normalized_params = ParamsNormalizer.normalize_params(params)
 
-        {key, v}
-      end
-
-    sale_id = Map.get(params, :sale_id)
-    amount = Map.get(params, :amount)
+    sale_id = Map.get(normalized_params, :sale_id)
+    amount = Map.get(normalized_params, :amount)
 
     with {:ok, sale} <- fetch_sale(sale_id, sale_repo),
          :ok <- ensure_sale_allows_payment(sale),

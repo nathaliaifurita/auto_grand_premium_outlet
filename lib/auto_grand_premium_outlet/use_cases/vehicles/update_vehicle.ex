@@ -5,6 +5,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicle do
 
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
+  alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
 
   @type error ::
           :vehicle_not_found
@@ -19,8 +20,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicle do
           VehicleRepository.t()
         ) :: {:ok, Vehicle.t()} | {:error, error()}
   def execute(id, attrs, vehicle_repo) do
+    # Normalize parameters (string keys to atoms)
+    normalized_attrs = ParamsNormalizer.normalize_vehicle_params(attrs)
+
     with {:ok, vehicle} <- fetch_vehicle(id, vehicle_repo),
-         {:ok, updated_vehicle} <- Vehicle.update(vehicle, attrs),
+         {:ok, updated_vehicle} <- Vehicle.update(vehicle, normalized_attrs),
          {:ok, persisted_vehicle} <- vehicle_repo.update(updated_vehicle) do
       {:ok, persisted_vehicle}
     else

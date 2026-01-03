@@ -6,6 +6,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
   alias AutoGrandPremiumOutlet.Domain.Services.IdGenerator
+  alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
 
   @type error ::
           :invalid_year
@@ -17,11 +18,13 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
   @spec execute(map(), VehicleRepository.t(), IdGenerator.t()) ::
           {:ok, Vehicle.t()} | {:error, error()}
   def execute(attrs, vehicle_repo, id_generator) do
+    # Normalize parameters (string keys to atoms, string values to integers)
+    normalized_attrs = ParamsNormalizer.normalize_vehicle_params(attrs)
+
     # Always generate a new ID, ignoring any ID that might come in attrs
-    attrs_with_id = 
-      attrs
+    attrs_with_id =
+      normalized_attrs
       |> Map.delete(:id)
-      |> Map.delete("id")
       |> Map.put(:id, id_generator.generate())
 
     with {:ok, vehicle} <- Vehicle.new(attrs_with_id),

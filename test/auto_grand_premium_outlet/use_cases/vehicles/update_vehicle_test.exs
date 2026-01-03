@@ -59,4 +59,20 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
     assert {:error, :invalid_license_plate} =
              UpdateVehicle.execute("vehicle-1", %{license_plate: "123"}, FakeVehicleRepo)
   end
+
+  test "normalizes string parameters from HTTP requests" do
+    # Simulating HTTP request with string keys and string values
+    attrs = %{
+      "color" => "Vermelho",
+      "price" => "120000",
+      "year" => "2023"
+    }
+
+    assert {:ok, updated_vehicle} =
+             UpdateVehicle.execute("vehicle-1", attrs, FakeVehicleRepo)
+
+    assert updated_vehicle.color == "Vermelho"
+    assert updated_vehicle.price == 120_000
+    assert updated_vehicle.year == 2023
+  end
 end

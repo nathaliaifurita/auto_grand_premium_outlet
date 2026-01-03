@@ -101,5 +101,26 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       assert {:error, :persistence_error} =
                CreateVehicle.execute(attrs, VehicleRepoErrorMock, IdGeneratorMock)
     end
+
+    test "normalizes string parameters from HTTP requests" do
+      # Simulating HTTP request with string keys and string values
+      attrs = %{
+        "brand" => "Toyota",
+        "model" => "Corolla",
+        "year" => "2022",
+        "color" => "black",
+        "price" => "120000",
+        "license_plate" => "XYZ2A34"
+      }
+
+      assert {:ok, vehicle} =
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
+
+      assert vehicle.brand == "Toyota"
+      assert vehicle.model == "Corolla"
+      assert vehicle.year == 2022
+      assert vehicle.price == 120_000
+      assert vehicle.license_plate == "XYZ2A34"
+    end
   end
 end
