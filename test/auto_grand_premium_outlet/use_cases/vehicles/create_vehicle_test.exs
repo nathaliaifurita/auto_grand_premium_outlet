@@ -26,6 +26,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
     end
   end
 
+  defmodule IdGeneratorMock do
+    def generate, do: "test-id-123"
+  end
+
   describe "execute/2" do
     test "creates a vehicle with valid attributes" do
       attrs = %{
@@ -38,7 +42,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:ok, vehicle} =
-               CreateVehicle.execute(attrs, VehicleRepoMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
 
       assert vehicle.brand == "Toyota"
       assert vehicle.model == "Corolla"
@@ -56,7 +60,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :invalid_year} =
-               CreateVehicle.execute(attrs, VehicleRepoMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
     end
 
     # test "returns error when price is invalid" do
@@ -81,7 +85,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :invalid_year} =
-               CreateVehicle.execute(attrs, VehicleRepoMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
     end
 
     test "returns persistence_error when repo fails" do
@@ -95,7 +99,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :persistence_error} =
-               CreateVehicle.execute(attrs, VehicleRepoErrorMock)
+               CreateVehicle.execute(attrs, VehicleRepoErrorMock, IdGeneratorMock)
     end
   end
 end

@@ -40,6 +40,14 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
     end
   end
 
+  defmodule IdGeneratorMock do
+    def generate, do: "test-payment-id-123"
+  end
+
+  defmodule CodeGeneratorMock do
+    def generate, do: "TEST-CODE-123"
+  end
+
   ## -------- Tests --------
 
   test "creates a successfull payment when sales is valid" do
@@ -53,7 +61,9 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
              CreatePayment.execute(
                attrs,
                FakePaymentRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock,
+               CodeGeneratorMock
              )
 
     # assert payment.payment_code == payment.payment_code
@@ -74,7 +84,9 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
              CreatePayment.execute(
                attrs,
                FailingPaymentRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock,
+               CodeGeneratorMock
              )
   end
 
@@ -89,7 +101,9 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
              CreatePayment.execute(
                attrs,
                FailingPaymentRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock,
+               CodeGeneratorMock
              )
   end
 end

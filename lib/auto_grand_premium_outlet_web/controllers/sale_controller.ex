@@ -16,7 +16,8 @@ defmodule AutoGrandPremiumOutletWeb.SaleController do
              vehicle_id,
              buyer_cpf,
              vehicle_repo(),
-             sale_repo()
+             sale_repo(),
+             id_generator()
            ) do
       conn
       |> put_status(:created)
@@ -48,5 +49,9 @@ defmodule AutoGrandPremiumOutletWeb.SaleController do
 
   defp vehicle_repo do
     Application.fetch_env!(:auto_grand_premium_outlet, :vehicle_repo)
+  end
+
+  defp id_generator do
+    Application.fetch_env!(:auto_grand_premium_outlet, :id_generator)
   end
 end

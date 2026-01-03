@@ -10,6 +10,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
     SaleRepository
   }
 
+  alias AutoGrandPremiumOutlet.Domain.Services.{
+    IdGenerator,
+    CodeGenerator
+  }
+
   @type error ::
           :invalid_amount
           | :invalid_sale_id
@@ -22,9 +27,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
   @spec execute(
           map(),
           PaymentRepository.t(),
-          SaleRepository.t()
+          SaleRepository.t(),
+          IdGenerator.t(),
+          CodeGenerator.t()
         ) :: {:ok, Payment.t()} | {:error, error()}
-  def execute(params, payment_repo, sale_repo) do
+  def execute(params, payment_repo, sale_repo, id_generator, code_generator) do
     params =
       for {k, v} <- params, into: %{} do
         key =
@@ -43,6 +50,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
          :ok <- ensure_sale_allows_payment(sale),
          {:ok, payment} <-
            Payment.new(%{
+             id: id_generator.generate(),
+             payment_code: code_generator.generate(),
              sale_id: sale_id,
              amount: amount
            }),

@@ -5,17 +5,26 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
 
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
+  alias AutoGrandPremiumOutlet.Domain.Services.IdGenerator
 
   @type error ::
           :invalid_year
           | :invalid_price
           | :invalid_license_plate
+          | :invalid_id
           | :persistence_error
 
-  @spec execute(map(), VehicleRepository.t()) ::
+  @spec execute(map(), VehicleRepository.t(), IdGenerator.t()) ::
           {:ok, Vehicle.t()} | {:error, error()}
-  def execute(attrs, vehicle_repo) do
-    with {:ok, vehicle} <- Vehicle.new(attrs),
+  def execute(attrs, vehicle_repo, id_generator) do
+    # Always generate a new ID, ignoring any ID that might come in attrs
+    attrs_with_id = 
+      attrs
+      |> Map.delete(:id)
+      |> Map.delete("id")
+      |> Map.put(:id, id_generator.generate())
+
+    with {:ok, vehicle} <- Vehicle.new(attrs_with_id),
          {:ok, vehicle} <- vehicle_repo.save(vehicle) do
       {:ok, vehicle}
     else
@@ -29,5 +38,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
   defp map_error(:invalid_year), do: :invalid_year
   defp map_error(:invalid_price), do: :invalid_price
   defp map_error(:invalid_license_plate), do: :invalid_license_plate
+  defp map_error(:id_required), do: :persistence_error
+  defp map_error(:invalid_id), do: :invalid_id
   defp map_error(_), do: :persistence_error
 end

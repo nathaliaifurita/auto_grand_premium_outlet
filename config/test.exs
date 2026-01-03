@@ -48,7 +48,9 @@ config :auto_grand_premium_outlet, AutoGrandPremiumOutlet.Repo,
 config :auto_grand_premium_outlet,
   vehicle_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock,
   sale_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.SaleRepoMock,
-  payment_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.PaymentRepoMock
+  payment_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.PaymentRepoMock,
+  id_generator: AutoGrandPremiumOutlet.Infra.Services.IdGenerator,
+  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator
 
 # (futuro)
 # config :auto_grand_premium_outlet,

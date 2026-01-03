@@ -52,6 +52,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
     def create(%Sale{} = sale), do: {:ok, sale}
   end
 
+  defmodule IdGeneratorMock do
+    def generate, do: "test-sale-id-123"
+  end
+
   ## -------- tests --------
 
   test "creates a sale when vehicle is available" do
@@ -60,7 +64,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "vehicle-1",
                "12345678909",
                FakeVehicleRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock
              )
 
     assert sale.vehicle_id == "vehicle-1"
@@ -73,7 +78,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "invalid-id",
                "12345678909",
                FakeVehicleRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock
              )
   end
 
@@ -83,7 +89,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "vehicle-1",
                "123",
                FakeVehicleRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock
              )
   end
 
@@ -93,7 +100,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "vehicle-2",
                "12345678901",
                SoldVehicleRepo,
-               FakeSaleRepo
+               FakeSaleRepo,
+               IdGeneratorMock
              )
   end
 end

@@ -10,6 +10,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSale do
     VehicleRepository
   }
 
+  alias AutoGrandPremiumOutlet.Domain.Services.IdGenerator
+
   @type error ::
           :vehicle_not_found
           | :vehicle_already_sold
@@ -20,12 +22,18 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSale do
           String.t(),
           String.t(),
           VehicleRepository.t(),
-          SaleRepository.t()
+          SaleRepository.t(),
+          IdGenerator.t()
         ) :: {:ok, Sale.t()} | {:error, error()}
-  def execute(vehicle_id, buyer_cpf, vehicle_repo, sale_repo) do
+  def execute(vehicle_id, buyer_cpf, vehicle_repo, sale_repo, id_generator) do
     with {:ok, vehicle} <- fetch_vehicle(vehicle_id, vehicle_repo),
          :ok <- ensure_available(vehicle),
-         {:ok, sale} <- Sale.new(%{vehicle_id: vehicle.id, buyer_cpf: buyer_cpf}),
+         {:ok, sale} <-
+           Sale.new(%{
+             id: id_generator.generate(),
+             vehicle_id: vehicle.id,
+             buyer_cpf: buyer_cpf
+           }),
          {:ok, sale} <- sale_repo.create(sale) do
       {:ok, sale}
     else

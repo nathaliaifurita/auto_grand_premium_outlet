@@ -6,6 +6,8 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
   describe "new/1" do
     test "creates a new payment :in_process" do
       attrs = %{
+        id: "payment-123",
+        payment_code: "PAY-ABC123",
         sale_id: "sale-1",
         amount: 100_000
       }
@@ -23,6 +25,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
 
     test "returns error when the sale_id is nil" do
       attrs = %{
+        id: "payment-123",
         payment_code: "pay-123",
         sale_id: "",
         amount: 100_000
@@ -33,6 +36,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
 
     test "returns error when the amount is below 0" do
       attrs = %{
+        id: "payment-123",
         payment_code: "pay-123",
         sale_id: "sale-1",
         amount: -10
@@ -43,6 +47,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
 
     test "does not allow to create payment with a informed state" do
       attrs = %{
+        id: "payment-123",
         payment_code: "pay-123",
         sale_id: "sale-1",
         amount: 100_000,
@@ -58,6 +63,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
     test "mark :in_process state payment as :paid" do
       {:ok, payment} =
         Payment.new(%{
+          id: "payment-123",
           payment_code: "pay-123",
           sale_id: "sale-1",
           amount: 50_000
@@ -100,6 +106,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
     test "mark :in_process state as :cancel" do
       {:ok, payment} =
         Payment.new(%{
+          id: "payment-123",
           payment_code: "pay-123",
           sale_id: "sale-1",
           amount: 30_000

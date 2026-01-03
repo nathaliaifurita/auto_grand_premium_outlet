@@ -6,6 +6,7 @@ defmodule AutoGrandPremiumOutlet.Domain.SaleTest do
   describe "new/1" do
     test "returns a valid sale with default :initiated state" do
       attrs = %{
+        id: "sale-123",
         vehicle_id: "vehicle-123",
         buyer_cpf: "12345678901"
       }

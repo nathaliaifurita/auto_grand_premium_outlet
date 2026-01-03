@@ -16,7 +16,9 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
            CreatePayment.execute(
              params,
              payment_repo(),
-             sale_repo()
+             sale_repo(),
+             id_generator(),
+             code_generator()
            ) do
       conn
       |> put_status(:created)
@@ -53,5 +55,13 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
 
   defp sale_repo do
     Application.fetch_env!(:auto_grand_premium_outlet, :sale_repo)
+  end
+
+  defp id_generator do
+    Application.fetch_env!(:auto_grand_premium_outlet, :id_generator)
+  end
+
+  defp code_generator do
+    Application.fetch_env!(:auto_grand_premium_outlet, :code_generator)
   end
 end

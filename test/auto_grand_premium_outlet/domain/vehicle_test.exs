@@ -6,6 +6,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
   describe "new/1" do
     test "creates a new vehicle with state :available" do
       attrs = %{
+        id: "vehicle-123",
         brand: "Toyota",
         model: "Corolla",
         year: 2020,
@@ -29,6 +30,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
 
     test "returns error when the year is invalid" do
       attrs = %{
+        id: "vehicle-123",
         brand: "Ford",
         model: "Ka",
         year: 1700,
@@ -42,6 +44,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
 
     test "returns error when price is negative" do
       attrs = %{
+        id: "vehicle-123",
         brand: "Fiat",
         model: "Uno",
         year: 2015,
@@ -55,6 +58,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
 
     test "returns error when the license plate is invalid" do
       attrs = %{
+        id: "vehicle-123",
         brand: "Renault",
         model: "Sandero",
         year: 2020,
@@ -71,6 +75,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "sells an available vehicle" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Honda",
           model: "Civic",
           year: 2019,
@@ -86,6 +91,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "returns error when the vehicle has already sold" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Ford",
           model: "Focus",
           year: 2018,
@@ -104,6 +110,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "updates vehicle info and defines updated_at date" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Toyota",
           model: "Corolla",
           year: 2020,
@@ -129,6 +136,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "updates only some fields" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Honda",
           model: "Civic",
           year: 2019,
@@ -156,6 +164,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "does not update updated_at if no field is modified" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Chevrolet",
           model: "Onix",
           year: 2021,
@@ -172,6 +181,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "successfully updates multiple fields" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Nissan",
           model: "Sentra",
           year: 2017,
@@ -205,6 +215,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "não permite atualizar veículo com dados inválidos mantém dados originais" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Volkswagen",
           model: "Golf",
           year: 2016,
@@ -227,6 +238,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
     test "returns error for an invalid year" do
       {:ok, vehicle} =
         Vehicle.new(%{
+          id: "vehicle-123",
           brand: "Mazda",
           model: "3",
           year: 2015,

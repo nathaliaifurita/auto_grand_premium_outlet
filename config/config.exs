@@ -11,7 +11,9 @@ config :auto_grand_premium_outlet,
   ecto_repos: [AutoGrandPremiumOutlet.Repo],
   vehicle_repo: AutoGrandPremiumOutlet.Infra.Repositories.VehicleRepo,
   sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepo,
-  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo
+  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo,
+  id_generator: AutoGrandPremiumOutlet.Infra.Services.IdGenerator,
+  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator
 
 # Configures the endpoint
 config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,

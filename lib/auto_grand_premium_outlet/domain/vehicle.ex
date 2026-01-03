@@ -61,14 +61,13 @@ defmodule AutoGrandPremiumOutlet.Domain.Vehicle do
         {key, value}
       end
 
-    id = Map.get(attrs, :id, generate_id())
-
-    with :ok <- maybe_validate_year(attrs[:year]),
+    with :ok <- validate_id(attrs[:id]),
+         :ok <- maybe_validate_year(attrs[:year]),
          :ok <- maybe_validate_price(attrs[:price]),
          :ok <- maybe_validate_license_plate(attrs[:license_plate]) do
       {:ok,
        %__MODULE__{
-         id: id,
+         id: attrs[:id],
          brand: attrs[:brand],
          model: attrs[:model],
          year: attrs[:year],
@@ -142,9 +141,9 @@ defmodule AutoGrandPremiumOutlet.Domain.Vehicle do
   end
 
   ## -------- validations --------
-  defp generate_id do
-    Ecto.UUID.generate()
-  end
+  defp validate_id(nil), do: {:error, :id_required}
+  defp validate_id(id) when is_binary(id) and byte_size(id) > 0, do: :ok
+  defp validate_id(_), do: {:error, :invalid_id}
 
   defp maybe_validate_year(nil), do: :ok
   defp maybe_validate_year(year) when is_integer(year) and year >= 1886, do: :ok
