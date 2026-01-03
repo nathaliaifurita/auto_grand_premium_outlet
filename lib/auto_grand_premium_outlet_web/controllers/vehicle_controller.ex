@@ -10,31 +10,38 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
   }
 
   alias AutoGrandPremiumOutletWeb.VehicleSerializer
+  alias AutoGrandPremiumOutletWeb.BaseController
 
   action_fallback AutoGrandPremiumOutletWeb.FallbackController
 
   def index(conn, _params) do
     with {:ok, vehicles} <-
-           ListAvailableVehicles.execute(vehicle_repo()) do
+           ListAvailableVehicles.execute(BaseController.vehicle_repo()) do
       json(conn, VehicleSerializer.serialize_many(vehicles))
     end
   end
 
   def sold(conn, _params) do
     with {:ok, vehicles} <-
-           ListSoldVehicles.execute(vehicle_repo()) do
+           ListSoldVehicles.execute(BaseController.vehicle_repo()) do
       json(conn, VehicleSerializer.serialize_many(vehicles))
     end
   end
 
   def show(conn, %{"id" => id}) do
-    with {:ok, vehicle} <- GetVehicle.execute(id, vehicle_repo()) do
+    with {:ok, vehicle} <- GetVehicle.execute(id, BaseController.vehicle_repo()) do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
   end
 
   def create(conn, params) do
-    with {:ok, vehicle} <- CreateVehicle.execute(params, vehicle_repo(), id_generator(), clock()) do
+    with {:ok, vehicle} <-
+           CreateVehicle.execute(
+             params,
+             BaseController.vehicle_repo(),
+             BaseController.id_generator(),
+             BaseController.clock()
+           ) do
       conn
       |> put_status(:created)
       |> json(VehicleSerializer.serialize(vehicle))
@@ -42,23 +49,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
   end
 
   def update(conn, %{"id" => id} = params) do
-    with {:ok, vehicle} <- UpdateVehicle.execute(id, params, vehicle_repo(), clock()) do
+    with {:ok, vehicle} <-
+           UpdateVehicle.execute(id, params, BaseController.vehicle_repo(), BaseController.clock()) do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
-  end
-
-  defp vehicle_repo do
-    Application.fetch_env!(
-      :auto_grand_premium_outlet,
-      :vehicle_repo
-    )
-  end
-
-  defp id_generator do
-    Application.fetch_env!(:auto_grand_premium_outlet, :id_generator)
-  end
-
-  defp clock do
-    Application.fetch_env!(:auto_grand_premium_outlet, :clock)
   end
 end

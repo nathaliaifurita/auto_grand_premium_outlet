@@ -6,6 +6,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
     CancelPayment
   }
 
+  alias AutoGrandPremiumOutletWeb.BaseController
+
   action_fallback AutoGrandPremiumOutletWeb.FallbackController
 
   ## -------- CONFIRM --------
@@ -14,9 +16,9 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
     with {:ok, _payment} <-
            ConfirmPayment.execute(
              payment_code,
-             payment_repo(),
-             sale_repo(),
-             clock()
+             BaseController.payment_repo(),
+             BaseController.sale_repo(),
+             BaseController.clock()
            ) do
       send_resp(conn, :ok, "Confirmed Payment")
     end
@@ -28,24 +30,10 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
     with {:ok, _payment} <-
            CancelPayment.execute(
              payment_code,
-             payment_repo(),
-             clock()
+             BaseController.payment_repo(),
+             BaseController.clock()
            ) do
       send_resp(conn, :ok, "")
     end
-  end
-
-  ## -------- deps --------
-
-  defp payment_repo do
-    Application.fetch_env!(:auto_grand_premium_outlet, :payment_repo)
-  end
-
-  defp sale_repo do
-    Application.fetch_env!(:auto_grand_premium_outlet, :sale_repo)
-  end
-
-  defp clock do
-    Application.fetch_env!(:auto_grand_premium_outlet, :clock)
   end
 end

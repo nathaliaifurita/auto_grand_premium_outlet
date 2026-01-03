@@ -6,13 +6,13 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.ListSoldVehicles do
   """
 
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
+  alias AutoGrandPremiumOutlet.UseCases.Vehicles.VehicleFilter
 
   @spec execute(VehicleRepository.t()) ::
           {:ok, [AutoGrandPremiumOutlet.Domain.Vehicle.t()]} | {:error, :not_found}
   def execute(vehicle_repo) do
     with {:ok, vehicles} <- vehicle_repo.list_sold() do
-      # Filter to ensure only sold vehicles are returned
-      sold_vehicles = Enum.filter(vehicles, &(&1.status == :sold))
+      sold_vehicles = VehicleFilter.filter_by_status(vehicles, :sold)
       {:ok, sold_vehicles}
     end
   end
