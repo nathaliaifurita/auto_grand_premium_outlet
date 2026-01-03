@@ -59,6 +59,12 @@ defmodule AutoGrandPremiumOutletWeb.FallbackController do
   defp map_error(:invalid_year),
     do: {:unprocessable_entity, "invalid_year", 422}
 
+  defp map_error(:invalid_amount),
+    do: {:unprocessable_entity, "invalid_amount", 422}
+
+  defp map_error(:invalid_sale_id),
+    do: {:unprocessable_entity, "invalid_sale_id", 422}
+
   defp map_error(_),
     do: {:internal_server_error, "internal_error", 500}
 end
