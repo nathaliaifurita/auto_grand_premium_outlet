@@ -10,8 +10,8 @@ import Config
 config :auto_grand_premium_outlet,
   ecto_repos: [AutoGrandPremiumOutlet.Repo],
   vehicle_repo: AutoGrandPremiumOutlet.Infra.Repositories.VehicleRepo,
-  sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepositoryImpl,
-  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepositoryImpl
+  sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepo,
+  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo
 
 # Configures the endpoint
 config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,

@@ -1,9 +1,15 @@
 defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.ListSoldVehicles do
-  def execute(vehicle_repo) do
-    vehicles =
-      vehicle_repo.list_sold()
-      |> Enum.sort_by(& &1.price, :asc)
+  @moduledoc """
+  Use case for listing sold vehicles ordered by price.
+  Sorting is handled by the repository (data access concern).
+  """
 
-    {:ok, vehicles}
+  alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
+
+  @spec execute(VehicleRepository.t()) ::
+          {:ok, [AutoGrandPremiumOutlet.Domain.Vehicle.t()]} | {:error, :not_found}
+  def execute(vehicle_repo) do
+    # Sorting is handled by the repository as it's a data access concern
+    vehicle_repo.list_sold()
   end
 end

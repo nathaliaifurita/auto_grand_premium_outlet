@@ -67,5 +67,5 @@ config :auto_grand_premium_outlet, :phoenix_swagger,
 
 config :auto_grand_premium_outlet,
   confirm_payment_use_case: AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment,
-  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepositoryImpl,
-  sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepositoryImpl
+  payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo,
+  sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepo

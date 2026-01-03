@@ -6,7 +6,13 @@ defmodule AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo do
   ## -------- GET --------
 
   @impl true
+  def get(_id), do: {:error, :not_found}
+
+  @impl true
   def get_by_payment_code(_code), do: {:error, :not_found}
+
+  @impl true
+  def get_by_sale_id(_sale_id), do: {:error, :not_found}
 
   ## -------- CREATE --------
 

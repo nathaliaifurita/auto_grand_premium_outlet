@@ -41,22 +41,11 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
     end
   end
 
-  ######################## melhoria: normalizar params antes de passar para o use case
-  # def create(conn, params) do
-  #   with {:ok, vehicle} <- CreateVehicle.execute(params) do
-  #     conn
-  #     |> put_status(:created)
-  #     |> json(VehicleSerializer.serialize(vehicle))
-  #   end
-  # end
-
   def update(conn, %{"id" => id} = params) do
     with {:ok, vehicle} <- UpdateVehicle.execute(id, params, vehicle_repo()) do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
   end
-
-  ### melhoria: normalizar params antes de passar para o use case
   defp vehicle_repo do
     Application.fetch_env!(
       :auto_grand_premium_outlet,

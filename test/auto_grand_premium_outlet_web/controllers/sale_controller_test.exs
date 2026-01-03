@@ -16,7 +16,7 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
       color: "Preto",
       price: 120_000,
       license_plate: "ABC12345",
-      status: "available",
+      status: :available,
       inserted_at: ~U[2025-12-29 03:43:35.033324Z],
       updated_at: nil,
       sold_at: nil
@@ -24,7 +24,10 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
     def create(%Vehicle{} = vehicle), do: {:ok, vehicle}
 
     def get("123"), do: {:ok, @vehicle}
+    def get("vehicle-123"), do: {:ok, @vehicle}
     def get(_), do: {:error, :not_found}
+
+    def update(%Vehicle{} = vehicle), do: {:ok, vehicle}
   end
 
   defmodule SaleRepoMock do
