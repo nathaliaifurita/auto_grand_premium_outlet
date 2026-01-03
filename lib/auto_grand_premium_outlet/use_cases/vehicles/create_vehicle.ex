@@ -5,7 +5,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
 
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
-  alias AutoGrandPremiumOutlet.Domain.Services.IdGenerator
+  alias AutoGrandPremiumOutlet.Domain.Services.{IdGenerator, Clock}
   alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
 
   @type error ::
@@ -15,9 +15,9 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
           | :invalid_id
           | :persistence_error
 
-  @spec execute(map(), VehicleRepository.t(), IdGenerator.t()) ::
+  @spec execute(map(), VehicleRepository.t(), IdGenerator.t(), Clock.t()) ::
           {:ok, Vehicle.t()} | {:error, error()}
-  def execute(attrs, vehicle_repo, id_generator) do
+  def execute(attrs, vehicle_repo, id_generator, clock) do
     # Normalize parameters (string keys to atoms, string values to integers)
     normalized_attrs = ParamsNormalizer.normalize_vehicle_params(attrs)
 
@@ -26,6 +26,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicle do
       normalized_attrs
       |> Map.delete(:id)
       |> Map.put(:id, id_generator.generate())
+      |> Map.put(:inserted_at, clock.now())
 
     with {:ok, vehicle} <- Vehicle.new(attrs_with_id),
          {:ok, vehicle} <- vehicle_repo.save(vehicle) do

@@ -6,6 +6,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
     SaleRepository
   }
 
+  alias AutoGrandPremiumOutlet.Domain.Services.Clock
+
   @type error ::
           :payment_not_found
           | :payment_already_paid
@@ -17,15 +19,17 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
           | :invalid_sale_state
           | :persistence_error
 
-  @spec execute(String.t(), PaymentRepository.t(), SaleRepository.t()) ::
+  @spec execute(String.t(), PaymentRepository.t(), SaleRepository.t(), Clock.t()) ::
           {:ok, Payment.t()} | {:error, error()}
-  def execute(payment_code, payment_repo, sale_repo) do
+  def execute(payment_code, payment_repo, sale_repo, clock) do
+    now = clock.now()
+
     with {:ok, payment} <- fetch_payment(payment_code, payment_repo),
          :ok <- validate_payment_state(payment),
          {:ok, sale} <- fetch_sale(payment.sale_id, sale_repo),
          :ok <- validate_sale_state(sale),
-         {:ok, completed_sale} <- Sale.complete(sale),
-         {:ok, paid_payment} <- Payment.mark_as_paid(payment),
+         {:ok, completed_sale} <- Sale.complete(sale, now),
+         {:ok, paid_payment} <- Payment.mark_as_paid(payment, now),
          {:ok, _} <- sale_repo.update(completed_sale),
          {:ok, updated_payment} <- payment_repo.update(paid_payment) do
       {:ok, updated_payment}

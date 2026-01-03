@@ -15,7 +15,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
            ConfirmPayment.execute(
              payment_code,
              payment_repo(),
-             sale_repo()
+             sale_repo(),
+             clock()
            ) do
       send_resp(conn, :ok, "Confirmed Payment")
     end
@@ -27,7 +28,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
     with {:ok, _payment} <-
            CancelPayment.execute(
              payment_code,
-             payment_repo()
+             payment_repo(),
+             clock()
            ) do
       send_resp(conn, :ok, "")
     end
@@ -41,5 +43,9 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
 
   defp sale_repo do
     Application.fetch_env!(:auto_grand_premium_outlet, :sale_repo)
+  end
+
+  defp clock do
+    Application.fetch_env!(:auto_grand_premium_outlet, :clock)
   end
 end

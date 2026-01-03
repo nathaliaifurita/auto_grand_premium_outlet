@@ -48,6 +48,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
     def generate, do: "TEST-CODE-123"
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- Tests --------
 
   test "creates a successfull payment when sales is valid" do
@@ -63,7 +67,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
                FakePaymentRepo,
                FakeSaleRepo,
                IdGeneratorMock,
-               CodeGeneratorMock
+               CodeGeneratorMock,
+               ClockMock
              )
 
     # assert payment.payment_code == payment.payment_code
@@ -86,7 +91,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
                FailingPaymentRepo,
                FakeSaleRepo,
                IdGeneratorMock,
-               CodeGeneratorMock
+               CodeGeneratorMock,
+               ClockMock
              )
   end
 
@@ -103,7 +109,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePaymentTest do
                FailingPaymentRepo,
                FakeSaleRepo,
                IdGeneratorMock,
-               CodeGeneratorMock
+               CodeGeneratorMock,
+               ClockMock
              )
   end
 end

@@ -9,7 +9,8 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         id: "payment-123",
         payment_code: "PAY-ABC123",
         sale_id: "sale-1",
-        amount: 100_000
+        amount: 100_000,
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:ok, %Payment{} = payment} = Payment.new(attrs)
@@ -51,7 +52,8 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         payment_code: "pay-123",
         sale_id: "sale-1",
         amount: 100_000,
-        payment_status: :paid
+        payment_status: :paid,
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:ok, payment} = Payment.new(attrs)
@@ -66,10 +68,11 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
           id: "payment-123",
           payment_code: "pay-123",
           sale_id: "sale-1",
-          amount: 50_000
+          amount: 50_000,
+          inserted_at: DateTime.utc_now()
         })
 
-      assert {:ok, paid_payment} = Payment.mark_as_paid(payment)
+      assert {:ok, paid_payment} = Payment.mark_as_paid(payment, DateTime.utc_now())
 
       assert paid_payment.payment_status == :paid
       assert %DateTime{} = paid_payment.updated_at
@@ -85,7 +88,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         inserted_at: DateTime.utc_now()
       }
 
-      assert {:error, :invalid_transition} = Payment.mark_as_paid(payment)
+      assert {:error, :invalid_transition} = Payment.mark_as_paid(payment, DateTime.utc_now())
     end
 
     test "returns error when the state is already cancelled" do
@@ -98,7 +101,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         inserted_at: DateTime.utc_now()
       }
 
-      assert {:error, :invalid_transition} = Payment.mark_as_paid(payment)
+      assert {:error, :invalid_transition} = Payment.mark_as_paid(payment, DateTime.utc_now())
     end
   end
 
@@ -109,10 +112,11 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
           id: "payment-123",
           payment_code: "pay-123",
           sale_id: "sale-1",
-          amount: 30_000
+          amount: 30_000,
+          inserted_at: DateTime.utc_now()
         })
 
-      assert {:ok, cancelled_payment} = Payment.cancel(payment)
+      assert {:ok, cancelled_payment} = Payment.cancel(payment, DateTime.utc_now())
 
       assert cancelled_payment.payment_status == :cancelled
       assert %DateTime{} = cancelled_payment.updated_at
@@ -128,7 +132,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         inserted_at: DateTime.utc_now()
       }
 
-      assert {:error, :invalid_transition} = Payment.cancel(payment)
+      assert {:error, :invalid_transition} = Payment.cancel(payment, DateTime.utc_now())
     end
 
     test "returns error to cancel an already :cancelled payment" do
@@ -141,7 +145,7 @@ defmodule AutoGrandPremiumOutlet.Domain.PaymentTest do
         inserted_at: DateTime.utc_now()
       }
 
-      assert {:error, :invalid_transition} = Payment.cancel(payment)
+      assert {:error, :invalid_transition} = Payment.cancel(payment, DateTime.utc_now())
     end
   end
 end

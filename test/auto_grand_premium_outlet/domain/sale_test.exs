@@ -8,7 +8,8 @@ defmodule AutoGrandPremiumOutlet.Domain.SaleTest do
       attrs = %{
         id: "sale-123",
         vehicle_id: "vehicle-123",
-        buyer_cpf: "12345678901"
+        buyer_cpf: "12345678901",
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:ok, %Sale{} = sale} = Sale.new(attrs)
@@ -85,39 +86,41 @@ defmodule AutoGrandPremiumOutlet.Domain.SaleTest do
 
   test "completes a sale in initiated state" do
     sale = build_sale(%{status: :initiated})
+    now = DateTime.utc_now()
 
-    assert {:ok, completed_sale} = Sale.complete(sale)
+    assert {:ok, completed_sale} = Sale.complete(sale, now)
     assert completed_sale.status == :completed
     refute is_nil(completed_sale.updated_at)
   end
 
   test "cannot complete a sale in cancelled state" do
     sale = build_sale(%{status: :cancelled})
-    assert {:error, :invalid_transition} = Sale.complete(sale)
+    assert {:error, :invalid_transition} = Sale.complete(sale, DateTime.utc_now())
   end
 
   test "cannot complete a sale in completed state" do
     sale = build_sale(%{status: :completed})
-    assert {:error, :invalid_transition} = Sale.complete(sale)
+    assert {:error, :invalid_transition} = Sale.complete(sale, DateTime.utc_now())
   end
 
   ## -------- Tests for cancel/1 --------
 
   test "cancels a sale in initiated state" do
     sale = build_sale(%{status: :initiated})
+    now = DateTime.utc_now()
 
-    assert {:ok, cancelled_sale} = Sale.cancel(sale)
+    assert {:ok, cancelled_sale} = Sale.cancel(sale, now)
     assert cancelled_sale.status == :cancelled
     refute is_nil(cancelled_sale.updated_at)
   end
 
   test "cannot cancel a sale in completed state" do
     sale = build_sale(%{status: :completed})
-    assert {:error, :invalid_transition} = Sale.cancel(sale)
+    assert {:error, :invalid_transition} = Sale.cancel(sale, DateTime.utc_now())
   end
 
   test "cannot cancel a sale already cancelled" do
     sale = build_sale(%{status: :cancelled})
-    assert {:error, :invalid_transition} = Sale.cancel(sale)
+    assert {:error, :invalid_transition} = Sale.cancel(sale, DateTime.utc_now())
   end
 end

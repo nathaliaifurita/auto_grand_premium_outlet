@@ -103,6 +103,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSaleTest do
     def update(vehicle), do: {:ok, vehicle}
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- Tests --------
 
   test "successfully completes a sale" do
@@ -110,7 +114,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSaleTest do
              CompleteSale.execute(
                "sale-ok",
                FakeSaleRepo,
-               FakeVehicleRepo
+               FakeVehicleRepo,
+               ClockMock
              )
 
     assert sale.status == :completed
@@ -121,7 +126,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSaleTest do
              CompleteSale.execute(
                "sale-not-found",
                FakeSaleRepo,
-               FakeVehicleRepo
+               FakeVehicleRepo,
+               ClockMock
              )
   end
 
@@ -130,7 +136,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSaleTest do
              CompleteSale.execute(
                "sale-invalid-state",
                FakeSaleRepo,
-               FakeVehicleRepo
+               FakeVehicleRepo,
+               ClockMock
              )
   end
 
@@ -139,7 +146,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSaleTest do
              CompleteSale.execute(
                "sale-ok",
                VehicleAlreadySoldSaleRepo,
-               VehicleAlreadySoldVehicleRepo
+               VehicleAlreadySoldVehicleRepo,
+               ClockMock
              )
   end
 end

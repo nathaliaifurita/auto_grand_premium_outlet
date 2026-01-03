@@ -10,6 +10,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale do
     VehicleRepository
   }
 
+  alias AutoGrandPremiumOutlet.Domain.Services.Clock
+
   @type error ::
           :sale_not_found
           | :vehicle_not_found
@@ -17,16 +19,18 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale do
           | :vehicle_already_sold
           | :persistence_error
 
-  @spec execute(String.t(), SaleRepository.t(), VehicleRepository.t()) ::
+  @spec execute(String.t(), SaleRepository.t(), VehicleRepository.t(), Clock.t()) ::
           {:ok, Sale.t()} | {:error, error()}
 
-  def execute(sale_id, sale_repo, vehicle_repo) do
+  def execute(sale_id, sale_repo, vehicle_repo, clock) do
+    now = clock.now()
+
     with {:ok, sale} <- get_sale(sale_repo, sale_id),
          :ok <- ensure_in_initiated(sale),
          {:ok, vehicle} <- get_vehicle(vehicle_repo, sale.vehicle_id),
-         {:ok, sold_vehicle} <- Vehicle.sell(vehicle),
+         {:ok, sold_vehicle} <- Vehicle.sell(vehicle, now),
          {:ok, _updated_vehicle} <- vehicle_repo.update(sold_vehicle),
-         {:ok, completed_sale} <- Sale.complete(sale),
+         {:ok, completed_sale} <- Sale.complete(sale, now),
          {:ok, saved_sale} <- sale_repo.update(completed_sale) do
       {:ok, saved_sale}
     else

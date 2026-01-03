@@ -18,7 +18,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
              payment_repo(),
              sale_repo(),
              id_generator(),
-             code_generator()
+             code_generator(),
+             clock()
            ) do
       conn
       |> put_status(:created)
@@ -31,7 +32,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
            ConfirmPayment.execute(
              code,
              payment_repo(),
-             sale_repo()
+             sale_repo(),
+             clock()
            ) do
       json(conn, PaymentSerializer.serialize(payment))
     end
@@ -41,7 +43,8 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
     with {:ok, payment} <-
            CancelPayment.execute(
              code,
-             payment_repo()
+             payment_repo(),
+             clock()
            ) do
       json(conn, PaymentSerializer.serialize(payment))
     end
@@ -63,5 +66,9 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
 
   defp code_generator do
     Application.fetch_env!(:auto_grand_premium_outlet, :code_generator)
+  end
+
+  defp clock do
+    Application.fetch_env!(:auto_grand_premium_outlet, :clock)
   end
 end

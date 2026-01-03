@@ -12,7 +12,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
         year: 2020,
         color: "Prata",
         price: 85000,
-        license_plate: "ABC1D23"
+        license_plate: "ABC1D23",
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:ok, vehicle} = Vehicle.new(attrs)
@@ -36,7 +37,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
         year: 1700,
         color: "Azul",
         price: 30000,
-        license_plate: "DEF5678Y"
+        license_plate: "DEF5678Y",
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:error, :invalid_year} = Vehicle.new(attrs)
@@ -50,7 +52,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
         year: 2015,
         color: "Vermelho",
         price: -10,
-        license_plate: "GHI9012Z"
+        license_plate: "GHI9012Z",
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:error, :invalid_price} = Vehicle.new(attrs)
@@ -64,7 +67,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
         year: 2020,
         color: "Branco",
         price: 45_000,
-        license_plate: "123ABC"
+        license_plate: "123ABC",
+        inserted_at: DateTime.utc_now()
       }
 
       assert {:error, :invalid_license_plate} = Vehicle.new(attrs)
@@ -81,10 +85,11 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2019,
           color: "Azul",
           price: 90000,
-          license_plate: "XYZ2A34"
+          license_plate: "XYZ2A34",
+          inserted_at: DateTime.utc_now()
         })
 
-      assert {:ok, sold_vehicle} = Vehicle.sell(vehicle)
+      assert {:ok, sold_vehicle} = Vehicle.sell(vehicle, DateTime.utc_now())
       assert sold_vehicle.status == :sold
     end
 
@@ -97,12 +102,13 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2018,
           color: "Cinza",
           price: 75000,
-          license_plate: "LMN3B45"
+          license_plate: "LMN3B45",
+          inserted_at: DateTime.utc_now()
         })
 
-      {:ok, sold_vehicle} = Vehicle.sell(vehicle)
+      {:ok, sold_vehicle} = Vehicle.sell(vehicle, DateTime.utc_now())
 
-      assert {:error, :vehicle_already_sold} = Vehicle.sell(sold_vehicle)
+      assert {:error, :vehicle_already_sold} = Vehicle.sell(sold_vehicle, DateTime.utc_now())
     end
   end
 
@@ -116,7 +122,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2020,
           color: "Prata",
           price: 85000,
-          license_plate: "ABC1D23"
+          license_plate: "ABC1D23",
+          inserted_at: DateTime.utc_now()
         })
 
       :timer.sleep(1000)
@@ -125,7 +132,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
         Vehicle.update(vehicle, %{
           color: "Preto",
           price: 80000
-        })
+        }, DateTime.utc_now())
 
       assert updated_vehicle.color == "Preto"
       assert updated_vehicle.price == 80000
@@ -142,7 +149,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2019,
           color: "Azul",
           price: 90000,
-          license_plate: "XYZ2A34"
+          license_plate: "XYZ2A34",
+          inserted_at: DateTime.utc_now()
         })
 
       :timer.sleep(1000)
@@ -150,7 +158,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       {:ok, updated_vehicle} =
         Vehicle.update(vehicle, %{
           color: "Vermelho"
-        })
+        }, DateTime.utc_now())
 
       assert updated_vehicle.brand == vehicle.brand
       assert updated_vehicle.model == vehicle.model
@@ -170,10 +178,11 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2021,
           color: "Branco",
           price: 95000,
-          license_plate: "OPQ4C56"
+          license_plate: "OPQ4C56",
+          inserted_at: DateTime.utc_now()
         })
 
-      {:ok, updated_vehicle} = Vehicle.update(vehicle, %{})
+      {:ok, updated_vehicle} = Vehicle.update(vehicle, %{}, DateTime.utc_now())
 
       assert updated_vehicle.updated_at == nil
     end
@@ -187,7 +196,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2017,
           color: "Prata",
           price: 70000,
-          license_plate: "RST5D67"
+          license_plate: "RST5D67",
+          inserted_at: DateTime.utc_now()
         })
 
       :timer.sleep(1000)
@@ -199,7 +209,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2018,
           color: "Preto",
           price: 80000
-        })
+        }, DateTime.utc_now())
 
       assert updated_vehicle.brand == "Renault"
       assert updated_vehicle.model == "Sandero"
@@ -221,7 +231,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2016,
           color: "Azul",
           price: 80000,
-          license_plate: "UVW6E78"
+          license_plate: "UVW6E78",
+          inserted_at: DateTime.utc_now()
         })
 
       :timer.sleep(1000)
@@ -229,7 +240,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       {:error, :invalid_price} =
         Vehicle.update(vehicle, %{
           price: -5000
-        })
+        }, DateTime.utc_now())
 
       assert vehicle.price == 80000
       assert vehicle.updated_at == nil
@@ -244,7 +255,8 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
           year: 2015,
           color: "Vermelho",
           price: 60000,
-          license_plate: "XYZ7F89"
+          license_plate: "XYZ7F89",
+          inserted_at: DateTime.utc_now()
         })
 
       :timer.sleep(1000)
@@ -252,7 +264,7 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       {:error, :invalid_year} =
         Vehicle.update(vehicle, %{
           year: 1700
-        })
+        }, DateTime.utc_now())
 
       assert vehicle.year == 2015
       assert vehicle.updated_at == nil

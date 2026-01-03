@@ -56,6 +56,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
     def generate, do: "test-sale-id-123"
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- tests --------
 
   test "creates a sale when vehicle is available" do
@@ -65,7 +69,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "12345678909",
                FakeVehicleRepo,
                FakeSaleRepo,
-               IdGeneratorMock
+               IdGeneratorMock,
+               ClockMock
              )
 
     assert sale.vehicle_id == "vehicle-1"
@@ -79,7 +84,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "12345678909",
                FakeVehicleRepo,
                FakeSaleRepo,
-               IdGeneratorMock
+               IdGeneratorMock,
+               ClockMock
              )
   end
 
@@ -90,7 +96,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "123",
                FakeVehicleRepo,
                FakeSaleRepo,
-               IdGeneratorMock
+               IdGeneratorMock,
+               ClockMock
              )
   end
 
@@ -101,7 +108,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CreateSaleTest do
                "12345678901",
                SoldVehicleRepo,
                FakeSaleRepo,
-               IdGeneratorMock
+               IdGeneratorMock,
+               ClockMock
              )
   end
 end

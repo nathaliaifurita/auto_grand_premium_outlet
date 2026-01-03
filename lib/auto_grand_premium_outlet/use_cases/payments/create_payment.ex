@@ -12,7 +12,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
 
   alias AutoGrandPremiumOutlet.Domain.Services.{
     IdGenerator,
-    CodeGenerator
+    CodeGenerator,
+    Clock
   }
 
   alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
@@ -31,9 +32,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
           PaymentRepository.t(),
           SaleRepository.t(),
           IdGenerator.t(),
-          CodeGenerator.t()
+          CodeGenerator.t(),
+          Clock.t()
         ) :: {:ok, Payment.t()} | {:error, error()}
-  def execute(params, payment_repo, sale_repo, id_generator, code_generator) do
+  def execute(params, payment_repo, sale_repo, id_generator, code_generator, clock) do
     # Normalize parameters (string keys to atoms)
     normalized_params = ParamsNormalizer.normalize_params(params)
 
@@ -47,7 +49,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CreatePayment do
              id: id_generator.generate(),
              payment_code: code_generator.generate(),
              sale_id: sale_id,
-             amount: amount
+             amount: amount,
+             inserted_at: clock.now()
            }),
          {:ok, payment} <- payment_repo.save(payment) do
       {:ok, payment}

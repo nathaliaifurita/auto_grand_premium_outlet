@@ -30,6 +30,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
     def generate, do: "test-id-123"
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   describe "execute/2" do
     test "creates a vehicle with valid attributes" do
       attrs = %{
@@ -42,7 +46,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:ok, vehicle} =
-               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
 
       assert vehicle.brand == "Toyota"
       assert vehicle.model == "Corolla"
@@ -60,7 +64,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :invalid_year} =
-               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
     end
 
     # test "returns error when price is invalid" do
@@ -85,7 +89,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :invalid_year} =
-               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
     end
 
     test "returns persistence_error when repo fails" do
@@ -99,7 +103,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:error, :persistence_error} =
-               CreateVehicle.execute(attrs, VehicleRepoErrorMock, IdGeneratorMock)
+               CreateVehicle.execute(attrs, VehicleRepoErrorMock, IdGeneratorMock, ClockMock)
     end
 
     test "normalizes string parameters from HTTP requests" do
@@ -114,7 +118,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       }
 
       assert {:ok, vehicle} =
-               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock)
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
 
       assert vehicle.brand == "Toyota"
       assert vehicle.model == "Corolla"

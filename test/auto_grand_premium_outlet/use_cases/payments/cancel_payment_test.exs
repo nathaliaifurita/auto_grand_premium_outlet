@@ -70,11 +70,15 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPaymentTest do
     def update(_), do: {:error, :persistence_error}
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- Tests --------
 
   test "successfully cancel payment :in_process" do
     assert {:ok, %Payment{} = payment} =
-             CancelPayment.execute("pay-ok", FakePaymentRepo)
+             CancelPayment.execute("pay-ok", FakePaymentRepo, ClockMock)
 
     assert payment.payment_status == :cancelled
     assert %DateTime{} = payment.updated_at
@@ -82,21 +86,21 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPaymentTest do
 
   test "returns error when payment is not found" do
     assert {:error, :payment_not_found} =
-             CancelPayment.execute("pay-not-found", FakePaymentRepo)
+             CancelPayment.execute("pay-not-found", FakePaymentRepo, ClockMock)
   end
 
   test "returns error when the payment is already :paid" do
     assert {:error, :payment_already_paid} =
-             CancelPayment.execute("pay-paid", FakePaymentRepo)
+             CancelPayment.execute("pay-paid", FakePaymentRepo, ClockMock)
   end
 
   test "returns error when the payment is already :cancelled" do
     assert {:error, :payment_already_cancelled} =
-             CancelPayment.execute("pay-cancelled", FakePaymentRepo)
+             CancelPayment.execute("pay-cancelled", FakePaymentRepo, ClockMock)
   end
 
   test "returns persistence error when fails to cancel" do
     assert {:error, :persistence_error} =
-             CancelPayment.execute("boom", FailingPaymentRepo)
+             CancelPayment.execute("boom", FailingPaymentRepo, ClockMock)
   end
 end

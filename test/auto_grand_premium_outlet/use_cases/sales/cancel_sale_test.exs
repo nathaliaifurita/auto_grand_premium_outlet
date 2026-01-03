@@ -60,13 +60,18 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSaleTest do
     def update(_sale), do: {:error, :db_error}
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- Tests --------
 
   test "successfully cancels a sale initiated" do
     assert {:ok, sale} =
              CancelSale.execute(
                "sale-initiated",
-               FakeSaleRepo
+               FakeSaleRepo,
+               ClockMock
              )
 
     assert sale.status == :cancelled
@@ -76,7 +81,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSaleTest do
     assert {:error, :sale_not_found} =
              CancelSale.execute(
                "sale-not-found",
-               FakeSaleRepo
+               FakeSaleRepo,
+               ClockMock
              )
   end
 
@@ -84,7 +90,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSaleTest do
     assert {:error, :invalid_sale_state} =
              CancelSale.execute(
                "sale-completed",
-               FakeSaleRepo
+               FakeSaleRepo,
+               ClockMock
              )
   end
 
@@ -92,7 +99,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSaleTest do
     assert {:error, :invalid_sale_state} =
              CancelSale.execute(
                "sale-cancelled",
-               FakeSaleRepo
+               FakeSaleRepo,
+               ClockMock
              )
   end
 
@@ -100,7 +108,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSaleTest do
     assert {:error, :persistence_error} =
              CancelSale.execute(
                "sale-initiated",
-               FailingSaleRepo
+               FailingSaleRepo,
+               ClockMock
              )
   end
 end

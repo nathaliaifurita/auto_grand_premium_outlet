@@ -5,6 +5,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicle do
 
   alias AutoGrandPremiumOutlet.Domain.Vehicle
   alias AutoGrandPremiumOutlet.Domain.Repositories.VehicleRepository
+  alias AutoGrandPremiumOutlet.Domain.Services.Clock
   alias AutoGrandPremiumOutlet.UseCases.ParamsNormalizer
 
   @type error ::
@@ -17,14 +18,15 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicle do
   @spec execute(
           String.t(),
           map(),
-          VehicleRepository.t()
+          VehicleRepository.t(),
+          Clock.t()
         ) :: {:ok, Vehicle.t()} | {:error, error()}
-  def execute(id, attrs, vehicle_repo) do
+  def execute(id, attrs, vehicle_repo, clock) do
     # Normalize parameters (string keys to atoms)
     normalized_attrs = ParamsNormalizer.normalize_vehicle_params(attrs)
 
     with {:ok, vehicle} <- fetch_vehicle(id, vehicle_repo),
-         {:ok, updated_vehicle} <- Vehicle.update(vehicle, normalized_attrs),
+         {:ok, updated_vehicle} <- Vehicle.update(vehicle, normalized_attrs, clock.now()),
          {:ok, persisted_vehicle} <- vehicle_repo.update(updated_vehicle) do
       {:ok, persisted_vehicle}
     else

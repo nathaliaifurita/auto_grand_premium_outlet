@@ -34,7 +34,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
   end
 
   def create(conn, params) do
-    with {:ok, vehicle} <- CreateVehicle.execute(params, vehicle_repo(), id_generator()) do
+    with {:ok, vehicle} <- CreateVehicle.execute(params, vehicle_repo(), id_generator(), clock()) do
       conn
       |> put_status(:created)
       |> json(VehicleSerializer.serialize(vehicle))
@@ -42,7 +42,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
   end
 
   def update(conn, %{"id" => id} = params) do
-    with {:ok, vehicle} <- UpdateVehicle.execute(id, params, vehicle_repo()) do
+    with {:ok, vehicle} <- UpdateVehicle.execute(id, params, vehicle_repo(), clock()) do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
   end
@@ -55,5 +55,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
 
   defp id_generator do
     Application.fetch_env!(:auto_grand_premium_outlet, :id_generator)
+  end
+
+  defp clock do
+    Application.fetch_env!(:auto_grand_premium_outlet, :clock)
   end
 end

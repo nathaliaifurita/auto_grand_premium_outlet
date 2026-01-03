@@ -13,7 +13,8 @@ config :auto_grand_premium_outlet,
   sale_repo: AutoGrandPremiumOutlet.Infra.Repositories.SaleRepo,
   payment_repo: AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo,
   id_generator: AutoGrandPremiumOutlet.Infra.Services.IdGenerator,
-  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator
+  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator,
+  clock: AutoGrandPremiumOutlet.Infra.Services.Clock
 
 # Configures the endpoint
 config :auto_grand_premium_outlet, AutoGrandPremiumOutletWeb.Endpoint,

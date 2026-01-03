@@ -5,28 +5,19 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.CancelSale do
 
   alias AutoGrandPremiumOutlet.Domain.Sale
   alias AutoGrandPremiumOutlet.Domain.Repositories.SaleRepository
+  alias AutoGrandPremiumOutlet.Domain.Services.Clock
 
   @type error ::
           :sale_not_found
           | :invalid_sale_state
           | :persistence_error
 
-  ## -------- Public API --------
-
-  @spec execute(String.t(), SaleRepository.t()) ::
+  @spec execute(String.t(), SaleRepository.t(), Clock.t()) ::
           {:ok, Sale.t()} | {:error, error()}
-  def execute(sale_id, sale_repo) do
-    execute(sale_id, sale_repo, DateTime)
-  end
-
-  ## -------- Internal (testable / extensível) --------
-
-  @spec execute(String.t(), SaleRepository.t(), module()) ::
-          {:ok, Sale.t()} | {:error, error()}
-  def execute(sale_id, sale_repo, _datetime_mod) do
+  def execute(sale_id, sale_repo, clock) do
     with {:ok, sale} <- sale_repo.get(sale_id),
          :ok <- ensure_cancellable(sale),
-         {:ok, cancelled_sale} <- Sale.cancel(sale),
+         {:ok, cancelled_sale} <- Sale.cancel(sale, clock.now()),
          {:ok, saved_sale} <- sale_repo.update(cancelled_sale) do
       {:ok, saved_sale}
     else

@@ -26,6 +26,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
     def update(%Vehicle{} = vehicle), do: {:ok, vehicle}
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   test "successfully updates vehicle information" do
     attrs = %{
       color: "Vermelho",
@@ -33,7 +37,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
     }
 
     assert {:ok, updated_vehicle} =
-             UpdateVehicle.execute("vehicle-1", attrs, FakeVehicleRepo)
+             UpdateVehicle.execute("vehicle-1", attrs, FakeVehicleRepo, ClockMock)
 
     assert updated_vehicle.color == "Vermelho"
     assert updated_vehicle.price == 120_000
@@ -42,22 +46,22 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
 
   test "returns error when vehicle is not found" do
     assert {:error, :vehicle_not_found} =
-             UpdateVehicle.execute("unknown-id", %{color: "Azul"}, FakeVehicleRepo)
+             UpdateVehicle.execute("unknown-id", %{color: "Azul"}, FakeVehicleRepo, ClockMock)
   end
 
   test "returns error when year is invalid" do
     assert {:error, :invalid_year} =
-             UpdateVehicle.execute("vehicle-1", %{year: 1700}, FakeVehicleRepo)
+             UpdateVehicle.execute("vehicle-1", %{year: 1700}, FakeVehicleRepo, ClockMock)
   end
 
   test "returns error when price is invalid" do
     assert {:error, :invalid_price} =
-             UpdateVehicle.execute("vehicle-1", %{price: -10}, FakeVehicleRepo)
+             UpdateVehicle.execute("vehicle-1", %{price: -10}, FakeVehicleRepo, ClockMock)
   end
 
   test "returns error when license plate is invalid" do
     assert {:error, :invalid_license_plate} =
-             UpdateVehicle.execute("vehicle-1", %{license_plate: "123"}, FakeVehicleRepo)
+             UpdateVehicle.execute("vehicle-1", %{license_plate: "123"}, FakeVehicleRepo, ClockMock)
   end
 
   test "normalizes string parameters from HTTP requests" do
@@ -69,7 +73,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
     }
 
     assert {:ok, updated_vehicle} =
-             UpdateVehicle.execute("vehicle-1", attrs, FakeVehicleRepo)
+             UpdateVehicle.execute("vehicle-1", attrs, FakeVehicleRepo, ClockMock)
 
     assert updated_vehicle.color == "Vermelho"
     assert updated_vehicle.price == 120_000

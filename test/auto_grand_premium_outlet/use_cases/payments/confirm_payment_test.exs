@@ -74,6 +74,10 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
     def get(_), do: {:error, :not_found}
   end
 
+  defmodule ClockMock do
+    def now, do: DateTime.utc_now()
+  end
+
   ## -------- Tests --------
 
   test "successfully confirms payment and completes sale" do
@@ -81,7 +85,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
              ConfirmPayment.execute(
                "pay-ok",
                PaymentRepoOk,
-               SaleRepoInitiated
+               SaleRepoInitiated,
+               ClockMock
              )
 
     assert payment.payment_status == :paid
@@ -92,7 +97,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
              ConfirmPayment.execute(
                "pay-x",
                PaymentRepoNotFound,
-               SaleRepoInitiated
+               SaleRepoInitiated,
+               ClockMock
              )
   end
 
@@ -101,7 +107,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
              ConfirmPayment.execute(
                "pay-paid",
                PaymentRepoPaid,
-               SaleRepoInitiated
+               SaleRepoInitiated,
+               ClockMock
              )
   end
 
@@ -110,7 +117,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
              ConfirmPayment.execute(
                "pay-ok",
                PaymentRepoOk,
-               SaleRepoNotFound
+               SaleRepoNotFound,
+               ClockMock
              )
   end
 
@@ -119,7 +127,8 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
              ConfirmPayment.execute(
                "pay-ok",
                PaymentRepoOk,
-               SaleRepoCompleted
+               SaleRepoCompleted,
+               ClockMock
              )
   end
 end

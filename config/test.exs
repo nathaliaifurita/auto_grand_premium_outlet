@@ -50,7 +50,8 @@ config :auto_grand_premium_outlet,
   sale_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.SaleRepoMock,
   payment_repo: AutoGrandPremiumOutlet.Test.Support.Repositories.PaymentRepoMock,
   id_generator: AutoGrandPremiumOutlet.Infra.Services.IdGenerator,
-  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator
+  code_generator: AutoGrandPremiumOutlet.Infra.Services.CodeGenerator,
+  clock: AutoGrandPremiumOutlet.Test.Support.Services.ClockMock
 
 # (futuro)
 # config :auto_grand_premium_outlet,

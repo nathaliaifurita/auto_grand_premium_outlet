@@ -1,6 +1,7 @@
 defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
   alias AutoGrandPremiumOutlet.Domain.Payment
   alias AutoGrandPremiumOutlet.Domain.Repositories.PaymentRepository
+  alias AutoGrandPremiumOutlet.Domain.Services.Clock
 
   @type error ::
           :payment_not_found
@@ -9,12 +10,12 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
           | :invalid_payment_state
           | :persistence_error
 
-  @spec execute(String.t(), PaymentRepository.t()) ::
+  @spec execute(String.t(), PaymentRepository.t(), Clock.t()) ::
           {:ok, Payment.t()} | {:error, error()}
-  def execute(payment_code, payment_repo) do
+  def execute(payment_code, payment_repo, clock) do
     with {:ok, payment} <- fetch_payment(payment_code, payment_repo),
          :ok <- validate_payment_state(payment),
-         {:ok, payment} <- Payment.cancel(payment),
+         {:ok, payment} <- Payment.cancel(payment, clock.now()),
          {:ok, payment} <- payment_repo.update(payment) do
       {:ok, payment}
     else
