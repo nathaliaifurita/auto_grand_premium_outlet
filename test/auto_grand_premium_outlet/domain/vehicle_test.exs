@@ -129,10 +129,14 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       :timer.sleep(1000)
 
       {:ok, updated_vehicle} =
-        Vehicle.update(vehicle, %{
-          color: "Preto",
-          price: 80000
-        }, DateTime.utc_now())
+        Vehicle.update(
+          vehicle,
+          %{
+            color: "Preto",
+            price: 80000
+          },
+          DateTime.utc_now()
+        )
 
       assert updated_vehicle.color == "Preto"
       assert updated_vehicle.price == 80000
@@ -156,9 +160,13 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       :timer.sleep(1000)
 
       {:ok, updated_vehicle} =
-        Vehicle.update(vehicle, %{
-          color: "Vermelho"
-        }, DateTime.utc_now())
+        Vehicle.update(
+          vehicle,
+          %{
+            color: "Vermelho"
+          },
+          DateTime.utc_now()
+        )
 
       assert updated_vehicle.brand == vehicle.brand
       assert updated_vehicle.model == vehicle.model
@@ -203,13 +211,17 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       :timer.sleep(1000)
 
       {:ok, updated_vehicle} =
-        Vehicle.update(vehicle, %{
-          brand: "Renault",
-          model: "Sandero",
-          year: 2018,
-          color: "Preto",
-          price: 80000
-        }, DateTime.utc_now())
+        Vehicle.update(
+          vehicle,
+          %{
+            brand: "Renault",
+            model: "Sandero",
+            year: 2018,
+            color: "Preto",
+            price: 80000
+          },
+          DateTime.utc_now()
+        )
 
       assert updated_vehicle.brand == "Renault"
       assert updated_vehicle.model == "Sandero"
@@ -238,9 +250,13 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       :timer.sleep(1000)
 
       {:error, :invalid_price} =
-        Vehicle.update(vehicle, %{
-          price: -5000
-        }, DateTime.utc_now())
+        Vehicle.update(
+          vehicle,
+          %{
+            price: -5000
+          },
+          DateTime.utc_now()
+        )
 
       assert vehicle.price == 80000
       assert vehicle.updated_at == nil
@@ -262,9 +278,13 @@ defmodule AutoGrandPremiumOutlet.Domain.VehicleTest do
       :timer.sleep(1000)
 
       {:error, :invalid_year} =
-        Vehicle.update(vehicle, %{
-          year: 1700
-        }, DateTime.utc_now())
+        Vehicle.update(
+          vehicle,
+          %{
+            year: 1700
+          },
+          DateTime.utc_now()
+        )
 
       assert vehicle.year == 2015
       assert vehicle.updated_at == nil

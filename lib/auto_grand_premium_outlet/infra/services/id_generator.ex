@@ -6,4 +6,3 @@ defmodule AutoGrandPremiumOutlet.Infra.Services.IdGenerator do
     Ecto.UUID.generate()
   end
 end
-

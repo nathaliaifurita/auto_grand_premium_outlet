@@ -8,4 +8,3 @@ defmodule AutoGrandPremiumOutlet.Infra.Services.Clock do
   @impl true
   def now(), do: DateTime.utc_now()
 end
-

@@ -11,11 +11,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
       {:ok, vehicle}
     end
 
-    def save(_), do: {:error, :persistence_error}
+    def save(%Vehicle{year: year}) when year < 1886 do
+      {:error, :invalid_year}
+    end
 
-    # def save(%Vehicle{year: year}) when year < 1886 do
-    #   {:error, :invalid_year}
-    # end    
+    def save(_), do: {:error, :persistence_error}
   end
 
   defmodule VehicleRepoErrorMock do
@@ -67,18 +67,19 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.CreateVehicleTest do
                CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
     end
 
-    # test "returns error when price is invalid" do
-    #   attrs = %{
-    #     brand: "Fiat",
-    #     model: "Uno",
-    #     year: 2010,
-    #     price: -100,
-    #     license_plate: "OPQ4C56"
-    #   }
+    test "returns error when price is invalid" do
+      attrs = %{
+        brand: "Fiat",
+        model: "Uno",
+        year: 2010,
+        price: -100,
+        license_plate: "OPQ4C56"
+      }
 
-    #   assert {:error, :invalid_price} =
-    #            CreateVehicle.execute(attrs, VehicleRepoMock)
-    # end
+      assert {:error, :invalid_price} =
+               CreateVehicle.execute(attrs, VehicleRepoMock, IdGeneratorMock, ClockMock)
+    end
+
     test "returns invalid_year when year is invalid" do
       attrs = %{
         brand: "Ford",

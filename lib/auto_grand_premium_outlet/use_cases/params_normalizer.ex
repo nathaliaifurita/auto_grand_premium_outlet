@@ -1,10 +1,10 @@
 defmodule AutoGrandPremiumOutlet.UseCases.ParamsNormalizer do
   @moduledoc """
   Utility module for normalizing parameters from external sources (e.g., HTTP requests).
-  
+
   This module handles the conversion of string keys to atoms and type conversions
   that are necessary when receiving data from external sources like HTTP controllers.
-  
+
   This normalization should happen in the application layer (use cases), not in the domain layer.
   """
 
@@ -54,4 +54,3 @@ defmodule AutoGrandPremiumOutlet.UseCases.ParamsNormalizer do
   defp normalize_key(k) when is_binary(k), do: String.to_existing_atom(k)
   defp normalize_key(k), do: k
 end
-

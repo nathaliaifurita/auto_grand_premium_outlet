@@ -6,4 +6,3 @@ defmodule AutoGrandPremiumOutlet.Domain.Services.CodeGenerator do
 
   @callback generate() :: String.t()
 end
-

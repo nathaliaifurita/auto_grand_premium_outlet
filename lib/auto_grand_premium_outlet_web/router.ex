@@ -12,7 +12,7 @@ defmodule AutoGrandPremiumOutletWeb.Router do
     scope "/vehicles" do
       post "/", VehicleController, :create
       put "/:id", VehicleController, :update
-      get "/", VehicleController, :index
+      get "/available", VehicleController, :index
       get "/sold", VehicleController, :sold
       get "/:id", VehicleController, :show
     end

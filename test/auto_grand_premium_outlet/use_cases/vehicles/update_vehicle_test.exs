@@ -61,7 +61,12 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.UpdateVehicleTest do
 
   test "returns error when license plate is invalid" do
     assert {:error, :invalid_license_plate} =
-             UpdateVehicle.execute("vehicle-1", %{license_plate: "123"}, FakeVehicleRepo, ClockMock)
+             UpdateVehicle.execute(
+               "vehicle-1",
+               %{license_plate: "123"},
+               FakeVehicleRepo,
+               ClockMock
+             )
   end
 
   test "normalizes string parameters from HTTP requests" do

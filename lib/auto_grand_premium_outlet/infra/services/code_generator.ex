@@ -7,4 +7,3 @@ defmodule AutoGrandPremiumOutlet.Infra.Services.CodeGenerator do
     |> Base.encode16()
   end
 end
-

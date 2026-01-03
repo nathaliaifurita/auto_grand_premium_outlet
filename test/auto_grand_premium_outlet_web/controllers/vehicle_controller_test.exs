@@ -33,9 +33,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
     end
   end
 
-  describe "GET /api/vehicles" do
+  describe "GET /api/vehicles/available" do
     test "returns available vehicles ordered by price", %{conn: conn} do
-      conn = get(conn, "/api/vehicles")
+      conn = get(conn, "/api/vehicles/available")
       response = json_response(conn, 200)
 
       assert length(response) == 2

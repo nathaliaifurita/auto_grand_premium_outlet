@@ -14,14 +14,15 @@ tags:
   - name: Payments
 
 paths:
-  /vehicles:
+  /vehicles/available:
     get:
       tags: [Vehicles]
-      summary: List all vehicles
+      summary: List available vehicles
       responses:
         '200':
           $ref: '#/components/responses/VehicleListResponse'
 
+  /vehicles:
     post:
       tags: [Vehicles]
       summary: Create a new vehicle
@@ -238,19 +239,26 @@ components:
       properties:
         id:
           type: string
+          default: vehicle-123
         brand:
           type: string
+          default: Toyota
         model:
           type: string
+          default: Corolla
         year:
           type: integer
+          default: 2020
         color:
           type: string
+          default: Black
         price:
           type: number
+          default: 25000.00
         status:
           type: string
           enum: [available, sold]
+          default: available
 
     VehicleInput:
       type: object

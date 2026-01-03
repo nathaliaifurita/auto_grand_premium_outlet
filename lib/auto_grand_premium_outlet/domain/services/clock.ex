@@ -6,4 +6,3 @@ defmodule AutoGrandPremiumOutlet.Domain.Services.Clock do
 
   @callback now() :: DateTime.t()
 end
-

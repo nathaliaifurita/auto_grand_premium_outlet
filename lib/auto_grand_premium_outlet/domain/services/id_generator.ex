@@ -6,4 +6,3 @@ defmodule AutoGrandPremiumOutlet.Domain.Services.IdGenerator do
 
   @callback generate() :: String.t()
 end
-

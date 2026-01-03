@@ -46,6 +46,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
   end
+
   defp vehicle_repo do
     Application.fetch_env!(
       :auto_grand_premium_outlet,
