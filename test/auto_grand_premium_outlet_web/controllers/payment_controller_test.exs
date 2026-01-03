@@ -1,7 +1,7 @@
 defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
   use AutoGrandPremiumOutletWeb.ConnCase, async: false
 
-  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
+  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale, Vehicle}
 
   ## -------- Payment Repo Mock --------
 
@@ -74,6 +74,46 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
     end
   end
 
+  ## -------- Vehicle Repo Mock --------
+
+  defmodule VehicleRepoMock do
+    def get("vehicle-1") do
+      {:ok,
+       %Vehicle{
+         id: "vehicle-1",
+         brand: "Toyota",
+         model: "Corolla",
+         year: 2022,
+         color: "Preto",
+         price: 70_000,
+         license_plate: "ABC1234",
+         status: :available,
+         inserted_at: DateTime.utc_now()
+       }}
+    end
+
+    def get("vehicle-2") do
+      {:ok,
+       %Vehicle{
+         id: "vehicle-2",
+         brand: "Honda",
+         model: "Civic",
+         year: 2021,
+         color: "Branco",
+         price: 80_000,
+         license_plate: "XYZ5678",
+         status: :available,
+         inserted_at: DateTime.utc_now()
+       }}
+    end
+
+    def get(_), do: {:error, :not_found}
+
+    def update(%Vehicle{} = vehicle) do
+      {:ok, vehicle}
+    end
+  end
+
   ## -------- Setup --------
 
   setup do
@@ -87,6 +127,12 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
       :auto_grand_premium_outlet,
       :sale_repo,
       SaleRepoMock
+    )
+
+    Application.put_env(
+      :auto_grand_premium_outlet,
+      :vehicle_repo,
+      VehicleRepoMock
     )
 
     :ok

@@ -2,7 +2,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
   use ExUnit.Case, async: true
 
   alias AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment
-  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
+  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale, Vehicle}
 
   ## -------- Fake Payment Repos --------
 
@@ -74,6 +74,31 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
     def get(_), do: {:error, :not_found}
   end
 
+  ## -------- Fake Vehicle Repos --------
+
+  defmodule VehicleRepoOk do
+    def get("vehicle-1") do
+      {:ok,
+       %Vehicle{
+         id: "vehicle-1",
+         brand: "Toyota",
+         model: "Corolla",
+         year: 2022,
+         color: "Preto",
+         price: 100_000,
+         license_plate: "ABC1234",
+         status: :available,
+         inserted_at: DateTime.utc_now()
+       }}
+    end
+
+    def update(vehicle), do: {:ok, vehicle}
+  end
+
+  defmodule VehicleRepoNotFound do
+    def get(_), do: {:error, :not_found}
+  end
+
   defmodule ClockMock do
     def now, do: DateTime.utc_now()
   end
@@ -86,6 +111,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
                "pay-ok",
                PaymentRepoOk,
                SaleRepoInitiated,
+               VehicleRepoOk,
                ClockMock
              )
 
@@ -98,6 +124,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
                "pay-x",
                PaymentRepoNotFound,
                SaleRepoInitiated,
+               VehicleRepoOk,
                ClockMock
              )
   end
@@ -108,6 +135,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
                "pay-paid",
                PaymentRepoPaid,
                SaleRepoInitiated,
+               VehicleRepoOk,
                ClockMock
              )
   end
@@ -118,6 +146,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
                "pay-ok",
                PaymentRepoOk,
                SaleRepoNotFound,
+               VehicleRepoOk,
                ClockMock
              )
   end
@@ -128,6 +157,18 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPaymentTest do
                "pay-ok",
                PaymentRepoOk,
                SaleRepoCompleted,
+               VehicleRepoOk,
+               ClockMock
+             )
+  end
+
+  test "returns error when vehicle is not found" do
+    assert {:error, :vehicle_not_found} =
+             ConfirmPayment.execute(
+               "pay-ok",
+               PaymentRepoOk,
+               SaleRepoInitiated,
+               VehicleRepoNotFound,
                ClockMock
              )
   end

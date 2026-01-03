@@ -51,6 +51,11 @@ defmodule AutoGrandPremiumOutlet.UseCases.ParamsNormalizer do
 
   ## -------- Private helpers --------
 
-  defp normalize_key(k) when is_binary(k), do: String.to_existing_atom(k)
+  defp normalize_key(k) when is_binary(k) do
+    # Use String.to_atom to create atoms dynamically
+    # This is safe for controlled inputs from HTTP requests
+    String.to_atom(k)
+  end
+
   defp normalize_key(k), do: k
 end

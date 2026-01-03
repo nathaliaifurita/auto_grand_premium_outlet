@@ -34,6 +34,7 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
              code,
              BaseController.payment_repo(),
              BaseController.sale_repo(),
+             BaseController.vehicle_repo(),
              BaseController.clock()
            ) do
       json(conn, PaymentSerializer.serialize(payment))

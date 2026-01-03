@@ -18,6 +18,7 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookController do
              payment_code,
              BaseController.payment_repo(),
              BaseController.sale_repo(),
+             BaseController.vehicle_repo(),
              BaseController.clock()
            ) do
       send_resp(conn, :ok, "Confirmed Payment")

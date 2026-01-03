@@ -1,9 +1,10 @@
 defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
-  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
+  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale, Vehicle}
 
   alias AutoGrandPremiumOutlet.Domain.Repositories.{
     PaymentRepository,
-    SaleRepository
+    SaleRepository,
+    VehicleRepository
   }
 
   alias AutoGrandPremiumOutlet.Domain.Services.Clock
@@ -17,17 +18,28 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
           | :sale_already_completed
           | :sale_already_cancelled
           | :invalid_sale_state
+          | :vehicle_not_found
+          | :vehicle_already_sold
           | :persistence_error
 
-  @spec execute(String.t(), PaymentRepository.t(), SaleRepository.t(), Clock.t()) ::
+  @spec execute(
+          String.t(),
+          PaymentRepository.t(),
+          SaleRepository.t(),
+          VehicleRepository.t(),
+          Clock.t()
+        ) ::
           {:ok, Payment.t()} | {:error, error()}
-  def execute(payment_code, payment_repo, sale_repo, clock) do
+  def execute(payment_code, payment_repo, sale_repo, vehicle_repo, clock) do
     now = clock.now()
 
     with {:ok, payment} <- fetch_payment(payment_code, payment_repo),
          :ok <- validate_payment_state(payment),
          {:ok, sale} <- fetch_sale(payment.sale_id, sale_repo),
          :ok <- validate_sale_state(sale),
+         {:ok, vehicle} <- fetch_vehicle(sale.vehicle_id, vehicle_repo),
+         {:ok, sold_vehicle} <- Vehicle.sell(vehicle, now),
+         {:ok, _updated_vehicle} <- vehicle_repo.update(sold_vehicle),
          {:ok, completed_sale} <- Sale.complete(sale, now),
          {:ok, paid_payment} <- Payment.mark_as_paid(payment, now),
          {:ok, _} <- sale_repo.update(completed_sale),
@@ -84,6 +96,13 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
     case sale_repo.get(sale_id) do
       {:ok, sale} -> {:ok, sale}
       {:error, :not_found} -> {:error, :sale_not_found}
+    end
+  end
+
+  defp fetch_vehicle(vehicle_id, vehicle_repo) do
+    case vehicle_repo.get(vehicle_id) do
+      {:ok, vehicle} -> {:ok, vehicle}
+      {:error, :not_found} -> {:error, :vehicle_not_found}
     end
   end
 end

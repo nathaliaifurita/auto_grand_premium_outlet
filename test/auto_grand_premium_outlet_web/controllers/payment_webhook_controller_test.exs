@@ -1,7 +1,7 @@
 defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
   use AutoGrandPremiumOutletWeb.ConnCase, async: false
 
-  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
+  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale, Vehicle}
 
   ## ------------------------------------------------------------------
   ## Fake Repositories (isolados e reutilizáveis)
@@ -71,6 +71,44 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
     end
   end
 
+  defmodule VehicleRepoMock do
+    def get("137") do
+      {:ok,
+       %Vehicle{
+         id: "137",
+         brand: "Toyota",
+         model: "Corolla",
+         year: 2022,
+         color: "Preto",
+         price: 100_000,
+         license_plate: "ABC1234",
+         status: :available,
+         inserted_at: DateTime.utc_now()
+       }}
+    end
+
+    def get("vehicle-sold") do
+      {:ok,
+       %Vehicle{
+         id: "vehicle-sold",
+         brand: "Honda",
+         model: "Civic",
+         year: 2021,
+         color: "Branco",
+         price: 100_000,
+         license_plate: "XYZ5678",
+         status: :sold,
+         inserted_at: DateTime.utc_now()
+       }}
+    end
+
+    def get(_), do: {:error, :not_found}
+
+    def update(%Vehicle{} = vehicle) do
+      {:ok, vehicle}
+    end
+  end
+
   ## ------------------------------------------------------------------
   ## Setup / Teardown por teste (limpa Application env)
   ## ------------------------------------------------------------------
@@ -78,10 +116,12 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
   setup do
     Application.put_env(:auto_grand_premium_outlet, :payment_repo, PaymentRepoMock)
     Application.put_env(:auto_grand_premium_outlet, :sale_repo, SaleRepoMock)
+    Application.put_env(:auto_grand_premium_outlet, :vehicle_repo, VehicleRepoMock)
 
     on_exit(fn ->
       Application.delete_env(:auto_grand_premium_outlet, :payment_repo)
       Application.delete_env(:auto_grand_premium_outlet, :sale_repo)
+      Application.delete_env(:auto_grand_premium_outlet, :vehicle_repo)
     end)
 
     :ok

@@ -10,6 +10,10 @@ defmodule AutoGrandPremiumOutlet.Application do
     children = [
       # Start the Ecto repository
       AutoGrandPremiumOutlet.Repo,
+      # Start in-memory repositories (Agents)
+      AutoGrandPremiumOutlet.Infra.Repositories.VehicleRepo,
+      AutoGrandPremiumOutlet.Infra.Repositories.SaleRepo,
+      AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo,
       # Start the Telemetry supervisor
       AutoGrandPremiumOutletWeb.Telemetry,
       # Start the PubSub system
