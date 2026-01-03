@@ -39,6 +39,7 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
       response = json_response(conn, 200)
 
       assert length(response) == 2
+      assert Enum.all?(response, fn vehicle -> vehicle["status"] == "available" end)
       assert Enum.at(response, 0)["price"] == 30_000
       assert Enum.at(response, 1)["price"] == 90_000
     end
@@ -49,6 +50,8 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
       conn = get(conn, "/api/vehicles/sold")
       response = json_response(conn, 200)
 
+      assert length(response) == 2
+      assert Enum.all?(response, fn vehicle -> vehicle["status"] == "sold" end)
       assert Enum.at(response, 0)["price"] == 25_000
       assert Enum.at(response, 1)["price"] == 120_000
     end
@@ -56,8 +59,10 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
 
   describe "PUT /api/vehicles/:id" do
     test "updates a vehicle", %{conn: conn} do
+      vehicle_id = AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
+      
       conn =
-        put(conn, "/api/vehicles/135", %{
+        put(conn, "/api/vehicles/#{vehicle_id}", %{
           price: 130_000
         })
 
@@ -68,7 +73,8 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
 
   describe "GET /api/vehicles/:id" do
     test "returns vehicle when found", %{conn: conn} do
-      conn = get(conn, "/api/vehicles/135")
+      vehicle_id = AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
+      conn = get(conn, "/api/vehicles/#{vehicle_id}")
 
       response = json_response(conn, 200)
       assert response["brand"] == "Toyota"
