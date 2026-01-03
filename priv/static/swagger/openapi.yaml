@@ -18,9 +18,12 @@ paths:
     get:
       tags: [Vehicles]
       summary: List available vehicles
+      description: Returns a list of available vehicles ordered by price
       responses:
         '200':
           $ref: '#/components/responses/VehicleListResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /vehicles:
     post:
@@ -33,14 +36,19 @@ paths:
           $ref: '#/components/responses/VehicleResponse'
         '422':
           $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /vehicles/sold:
     get:
       tags: [Vehicles]
       summary: List sold vehicles
+      description: Returns a list of sold vehicles ordered by price
       responses:
         '200':
           $ref: '#/components/responses/VehicleListResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /vehicles/{id}:
     get:
@@ -53,6 +61,8 @@ paths:
           $ref: '#/components/responses/VehicleResponse'
         '404':
           $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
     put:
       tags: [Vehicles]
@@ -64,8 +74,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/VehicleResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
         '422':
           $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /sales:
     post:
@@ -76,6 +90,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/SaleResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /sales/{sale_id}/complete:
     put:
@@ -86,6 +106,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SaleResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /sales/{sale_id}/cancel:
     put:
@@ -96,6 +122,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SaleResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /payments:
     post:
@@ -106,6 +138,12 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/PaymentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /payments/{payment_code}/confirm:
     put:
@@ -116,6 +154,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/PaymentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /payments/{payment_code}/cancel:
     put:
@@ -126,6 +170,12 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/PaymentResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
 
@@ -137,7 +187,7 @@ components:
       required: true
       schema:
         type: string
-        example: "veh_123"
+        example: "135"
 
     SaleId:
       name: sale_id
@@ -163,6 +213,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/VehicleInput'
+          example:
+            brand: "Toyota"
+            model: "Corolla"
+            year: 2022
+            color: "Preto"
+            price: 120000
+            license_plate: "ABC1D23"
 
     VehicleUpdate:
       required: true
@@ -170,6 +227,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/VehicleInput'
+          example:
+            brand: "Toyota"
+            model: "Corolla"
+            year: 2022
+            color: "Branco"
+            price: 130000
+            license_plate: "ABC1D23"
 
     SaleCreate:
       required: true
@@ -177,6 +241,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/SaleInput'
+          example:
+            vehicle_id: "135"
+            buyer_cpf: "12345678901"
 
     PaymentCreate:
       required: true
@@ -184,6 +251,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PaymentInput'
+          example:
+            sale_id: "sale_123"
+            amount: 120000
 
   ## 🔹 RESPONSES
   responses:
@@ -193,6 +263,31 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Vehicle'
+          examples:
+            available_vehicle:
+              summary: Available vehicle
+              value:
+                id: "135"
+                brand: "Toyota"
+                model: "Corolla"
+                year: 2022
+                color: "Preto"
+                price: 120000
+                license_plate: "ABC1D23"
+                status: "available"
+                sold_at: null
+            sold_vehicle:
+              summary: Sold vehicle
+              value:
+                id: "136"
+                brand: "Honda"
+                model: "Civic"
+                year: 2021
+                color: "Branco"
+                price: 90000
+                license_plate: "XYZ2A34"
+                status: "sold"
+                sold_at: "2024-01-15T10:30:00Z"
 
     VehicleListResponse:
       description: List of vehicles
@@ -202,6 +297,25 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Vehicle'
+          example:
+            - id: "135"
+              brand: "Toyota"
+              model: "Corolla"
+              year: 2022
+              color: "Preto"
+              price: 120000
+              license_plate: "ABC1D23"
+              status: "available"
+              sold_at: null
+            - id: "136"
+              brand: "Honda"
+              model: "Civic"
+              year: 2021
+              color: "Branco"
+              price: 90000
+              license_plate: "XYZ2A34"
+              status: "available"
+              sold_at: null
 
     SaleResponse:
       description: Sale data
@@ -209,6 +323,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Sale'
+          examples:
+            initiated_sale:
+              summary: Initiated sale
+              value:
+                id: "sale_123"
+                vehicle_id: "135"
+                buyer_cpf: "12345678901"
+                status: "initiated"
+                inserted_at: "2024-01-15T10:00:00Z"
+                updated_at: null
+            completed_sale:
+              summary: Completed sale
+              value:
+                id: "sale_123"
+                vehicle_id: "135"
+                buyer_cpf: "12345678901"
+                status: "completed"
+                inserted_at: "2024-01-15T10:00:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
 
     PaymentResponse:
       description: Payment data
@@ -216,6 +349,25 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Payment'
+          examples:
+            in_process_payment:
+              summary: Payment in process
+              value:
+                id: "pay_123"
+                payment_code: "pay_456"
+                amount: 120000
+                sale_id: "sale_123"
+                status: "in_process"
+                inserted_at: "2024-01-15T10:00:00Z"
+            paid_payment:
+              summary: Paid payment
+              value:
+                id: "pay_123"
+                payment_code: "pay_456"
+                amount: 120000
+                sale_id: "sale_123"
+                status: "paid"
+                inserted_at: "2024-01-15T10:00:00Z"
 
     ValidationError:
       description: Validation error
@@ -223,6 +375,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            error: "validation_error"
+            message: "Invalid price"
 
     NotFoundError:
       description: Resource not found
@@ -230,35 +385,66 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            error: "not_found"
+            message: "Resource not found"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "internal_server_error"
+            message: "An unexpected error occurred"
 
   ## 🔹 SCHEMAS
   schemas:
     Vehicle:
       type: object
-      required: [id, brand, model, year, color, price, status]
+      required: [id, brand, model, year, color, price, license_plate, status]
       properties:
         id:
           type: string
-          default: vehicle-123
+          example: "135"
         brand:
           type: string
-          default: Toyota
+          example: "Toyota"
         model:
           type: string
-          default: Corolla
+          example: "Corolla"
         year:
           type: integer
-          default: 2020
+          example: 2022
         color:
           type: string
-          default: Black
+          example: "Preto"
         price:
           type: number
-          default: 25000.00
+          example: 120000
+        license_plate:
+          type: string
+          example: "ABC1D23"
         status:
           type: string
           enum: [available, sold]
-          default: available
+          example: "available"
+        sold_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+      example:
+        id: "135"
+        brand: "Toyota"
+        model: "Corolla"
+        year: 2022
+        color: "Preto"
+        price: 120000
+        license_plate: "ABC1D23"
+        status: "available"
+        sold_at: null
 
     VehicleInput:
       type: object
@@ -266,55 +452,109 @@ components:
       properties:
         brand:
           type: string
-          default: Toyota
+          example: "Toyota"
         model:
           type: string
-          default: Corolla
+          example: "Corolla"
         year:
           type: integer
-          default: 2020
+          example: 2022
         color:
           type: string
-          default: Black
+          example: "Preto"
         price:
           type: number
-          default: 25000.00
+          example: 120000
         license_plate:
           type: string
-          default: ABC1D34
+          example: "ABC1D23"
+      example:
+        brand: "Toyota"
+        model: "Corolla"
+        year: 2022
+        color: "Preto"
+        price: 120000
+        license_plate: "ABC1D23"
 
     Sale:
       type: object
-      required: [id, status, vehicles]
+      required: [id, vehicle_id, buyer_cpf, status]
       properties:
         id:
           type: string
+          example: "sale_123"
+        vehicle_id:
+          type: string
+          example: "135"
+        buyer_cpf:
+          type: string
+          example: "12345678901"
         status:
           type: string
-          enum: [pending, completed, cancelled]
-        vehicles:
-          type: array
-          items:
-            $ref: '#/components/schemas/Vehicle'
+          enum: [initiated, completed, cancelled]
+          example: "initiated"
+        inserted_at:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+      example:
+        id: "sale_123"
+        vehicle_id: "135"
+        buyer_cpf: "12345678901"
+        status: "initiated"
+        inserted_at: "2024-01-15T10:00:00Z"
+        updated_at: null
 
     SaleInput:
       type: object
-      required: [customer_id]
+      required: [vehicle_id, buyer_cpf]
       properties:
-        customer_id:
+        vehicle_id:
           type: string
+          example: "135"
+        buyer_cpf:
+          type: string
+          example: "12345678901"
+      example:
+        vehicle_id: "135"
+        buyer_cpf: "12345678901"
 
     Payment:
       type: object
-      required: [code, amount, status]
+      required: [id, payment_code, amount, sale_id, status]
       properties:
-        code:
+        id:
           type: string
+          example: "pay_123"
+        payment_code:
+          type: string
+          example: "pay_456"
         amount:
           type: number
+          example: 120000
+        sale_id:
+          type: string
+          example: "sale_123"
         status:
           type: string
-          enum: [pending, confirmed, cancelled]
+          enum: [paid, cancelled, in_process]
+          example: "in_process"
+        inserted_at:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:00:00Z"
+      example:
+        id: "pay_123"
+        payment_code: "pay_456"
+        amount: 120000
+        sale_id: "sale_123"
+        status: "in_process"
+        inserted_at: "2024-01-15T10:00:00Z"
 
     PaymentInput:
       type: object
@@ -322,8 +562,13 @@ components:
       properties:
         sale_id:
           type: string
+          example: "sale_123"
         amount:
           type: number
+          example: 120000
+      example:
+        sale_id: "sale_123"
+        amount: 120000
 
     Error:
       type: object
@@ -331,7 +576,10 @@ components:
       properties:
         error:
           type: string
-          example: validation_error
+          example: "validation_error"
         message:
           type: string
-          example: Invalid price
+          example: "Invalid price"
+      example:
+        error: "validation_error"
+        message: "Invalid price"

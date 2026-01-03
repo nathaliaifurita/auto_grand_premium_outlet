@@ -50,7 +50,12 @@ defmodule AutoGrandPremiumOutletWeb.VehicleController do
 
   def update(conn, %{"id" => id} = params) do
     with {:ok, vehicle} <-
-           UpdateVehicle.execute(id, params, BaseController.vehicle_repo(), BaseController.clock()) do
+           UpdateVehicle.execute(
+             id,
+             params,
+             BaseController.vehicle_repo(),
+             BaseController.clock()
+           ) do
       json(conn, VehicleSerializer.serialize(vehicle))
     end
   end

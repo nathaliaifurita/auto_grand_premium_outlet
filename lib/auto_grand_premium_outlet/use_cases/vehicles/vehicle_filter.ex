@@ -14,4 +14,3 @@ defmodule AutoGrandPremiumOutlet.UseCases.Vehicles.VehicleFilter do
     Enum.filter(vehicles, &(&1.status == status))
   end
 end
-

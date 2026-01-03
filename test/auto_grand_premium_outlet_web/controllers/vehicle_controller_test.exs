@@ -59,8 +59,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
 
   describe "PUT /api/vehicles/:id" do
     test "updates a vehicle", %{conn: conn} do
-      vehicle_id = AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
-      
+      vehicle_id =
+        AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
+
       conn =
         put(conn, "/api/vehicles/#{vehicle_id}", %{
           price: 130_000
@@ -73,7 +74,9 @@ defmodule AutoGrandPremiumOutletWeb.VehicleControllerTest do
 
   describe "GET /api/vehicles/:id" do
     test "returns vehicle when found", %{conn: conn} do
-      vehicle_id = AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
+      vehicle_id =
+        AutoGrandPremiumOutlet.Test.Support.Repositories.VehicleRepoMock.base_vehicle_id()
+
       conn = get(conn, "/api/vehicles/#{vehicle_id}")
 
       response = json_response(conn, 200)

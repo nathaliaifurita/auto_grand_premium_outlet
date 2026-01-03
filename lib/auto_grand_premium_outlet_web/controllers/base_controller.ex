@@ -21,4 +21,3 @@ defmodule AutoGrandPremiumOutletWeb.BaseController do
   def code_generator, do: fetch_dependency(:code_generator)
   def clock, do: fetch_dependency(:clock)
 end
-
