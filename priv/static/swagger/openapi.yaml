@@ -12,6 +12,7 @@ tags:
   - name: Vehicles
   - name: Sales
   - name: Payments
+  - name: Webhooks
 
 paths:
   /vehicles/available:
@@ -177,6 +178,50 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /webhooks/payments/confirm:
+    put:
+      tags: [Webhooks]
+      summary: Confirm payment via webhook
+      description: Webhook endpoint for external payment providers to confirm a payment. Returns a simple success message.
+      requestBody:
+        $ref: '#/components/requestBodies/PaymentWebhookConfirm'
+      responses:
+        '200':
+          description: Payment confirmed successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Confirmed Payment"
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /webhooks/payments/cancel:
+    put:
+      tags: [Webhooks]
+      summary: Cancel payment via webhook
+      description: Webhook endpoint for external payment providers to cancel a payment. Returns a simple success message.
+      requestBody:
+        $ref: '#/components/requestBodies/PaymentWebhookCancel'
+      responses:
+        '200':
+          description: Payment cancelled successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ""
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
 
   ## 🔹 PARAMETERS
@@ -254,6 +299,34 @@ components:
           example:
             sale_id: "sale_123"
             amount: 120000
+
+    PaymentWebhookConfirm:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [payment_code]
+            properties:
+              payment_code:
+                type: string
+                example: "pay_456"
+          example:
+            payment_code: "pay_456"
+
+    PaymentWebhookCancel:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [payment_code]
+            properties:
+              payment_code:
+                type: string
+                example: "pay_456"
+          example:
+            payment_code: "pay_456"
 
   ## 🔹 RESPONSES
   responses:
