@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+ARCHITECTURE_REPORT_V2.md
+ROADMAP_TO_10.md
+
+# Build artifacts
+_build/
+deps/
+*.beam
+*.ez
+
+# Test files
+test/
+test/**/*.exs
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Kubernetes
+k8s/
+*.yaml
+*.yml
+
+# Misc
+erl_crash.dump
+*.pid
+

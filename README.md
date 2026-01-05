@@ -99,7 +99,33 @@ mix ecto.migrate
 
 ## ▶️ Executando o Projeto
 
-### Desenvolvimento
+### Docker Compose (Recomendado)
+
+A forma mais simples de executar o projeto localmente:
+
+```bash
+# Copie o arquivo de exemplo de variáveis de ambiente
+cp .env.example .env
+
+# Edite o .env e configure SECRET_KEY_BASE (gere com: mix phx.gen.secret)
+
+# Inicie todos os serviços
+docker compose up
+```
+
+O servidor estará disponível em `http://localhost:4000`
+
+Para executar em background:
+```bash
+docker compose up -d
+```
+
+Para parar:
+```bash
+docker compose down
+```
+
+### Desenvolvimento Local
 
 ```bash
 # Inicie o servidor Phoenix
@@ -300,6 +326,59 @@ test/
 - ✅ **VehicleFilter**: Centraliza lógica de filtragem
 - ✅ **ParamsNormalizer**: Centraliza normalização de parâmetros
 
+## 🐳 Docker
+
+### Build da Imagem
+
+```bash
+docker build -t auto-grand-premium-outlet:latest .
+```
+
+### Executar Container
+
+```bash
+docker run -p 4000:4000 \
+  -e DATABASE_URL="ecto://postgres:postgres@host.docker.internal:5432/auto_grand_premium_outlet_prod" \
+  -e SECRET_KEY_BASE="your-secret-key-base" \
+  auto-grand-premium-outlet:latest
+```
+
+## ☸️ Kubernetes
+
+O projeto inclui manifests Kubernetes completos para deploy em cluster.
+
+### Pré-requisitos
+
+- Cluster Kubernetes configurado
+- `kubectl` instalado e configurado
+- Imagem Docker disponível no registry
+
+### Deploy
+
+1. **Atualize os secrets** em `k8s/secret.yaml`:
+```bash
+# Gere um secret key base
+mix phx.gen.secret
+
+# Edite k8s/secret.yaml e atualize:
+# - POSTGRES_PASSWORD
+# - SECRET_KEY_BASE
+# - DATABASE_URL
+```
+
+2. **Aplique os manifests**:
+```bash
+kubectl apply -f k8s/
+```
+
+3. **Verifique o status**:
+```bash
+kubectl get pods -n auto-grand-premium-outlet
+kubectl get services -n auto-grand-premium-outlet
+```
+
+Para mais detalhes, consulte [k8s/README.md](./k8s/README.md)
+
 ## 📚 Documentação
 
 ### Arquitetura
@@ -309,7 +388,7 @@ Consulte o relatório completo de arquitetura:
 
 ### API
 
-- **Swagger UI**: `http://http://localhost:4000/swagger/index.html`
+- **Swagger UI**: `http://localhost:4000/swagger/index.html`
 - **OpenAPI Spec**: `priv/static/swagger/openapi.yaml`
 
 ## 🔧 Configuração

@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-grand-premium-outlet
+  namespace: auto-grand-premium-outlet
+  labels:
+    app: auto-grand-premium-outlet
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: auto-grand-premium-outlet
+  template:
+    metadata:
+      labels:
+        app: auto-grand-premium-outlet
+    spec:
+      initContainers:
+        - name: migrate
+          image: auto-grand-premium-outlet:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              ./auto_grand_premium_outlet/bin/auto_grand_premium_outlet eval "AutoGrandPremiumOutlet.Release.migrate()"
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auto-grand-premium-outlet-secrets
+                  key: DATABASE_URL
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: auto-grand-premium-outlet-secrets
+                  key: SECRET_KEY_BASE
+            - name: MIX_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: MIX_ENV
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      containers:
+        - name: app
+          image: auto-grand-premium-outlet:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+              protocol: TCP
+          env:
+            # Phoenix
+            - name: PHX_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: PHX_SERVER
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: PORT
+            - name: PHX_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: PHX_HOST
+            - name: MIX_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: MIX_ENV
+            
+            # Database
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: auto-grand-premium-outlet-secrets
+                  key: DATABASE_URL
+            - name: POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: POOL_SIZE
+            
+            # Secrets
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: auto-grand-premium-outlet-secrets
+                  key: SECRET_KEY_BASE
+            
+            # Logging
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: auto-grand-premium-outlet-config
+                  key: LOG_LEVEL
+          command:
+            - ./auto_grand_premium_outlet/bin/auto_grand_premium_outlet
+          args:
+            - start
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/vehicles/available
+              port: 4000
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/vehicles/available
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/auto_grand_premium_outlet/lib/auto_grand_premium_outlet_web-0.1.0/priv/static
+              readOnly: true
+      volumes:
+        - name: static-files
+          configMap:
+            name: static-files-config
+            optional: true
+

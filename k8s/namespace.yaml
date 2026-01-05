@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auto-grand-premium-outlet
+  labels:
+    name: auto-grand-premium-outlet
+    environment: production
+

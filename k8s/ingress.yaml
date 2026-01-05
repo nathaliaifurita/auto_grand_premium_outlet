@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auto-grand-premium-outlet-ingress
+  namespace: auto-grand-premium-outlet
+  labels:
+    app: auto-grand-premium-outlet
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: auto-grand-premium-outlet.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: auto-grand-premium-outlet-service
+                port:
+                  number: 80
+
