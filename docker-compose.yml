@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: auto_grand_premium_outlet_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-auto_grand_premium_outlet_prod}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auto_grand_premium_outlet_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Phoenix
+      PHX_SERVER: "true"
+      PORT: "4000"
+      PHX_HOST: "localhost"
+      
+      # Database
+      DATABASE_URL: "ecto://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-auto_grand_premium_outlet_prod}"
+      POOL_SIZE: "10"
+      
+      # Secrets (generate with: mix phx.gen.secret)
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-your-secret-key-base-change-in-production}
+      
+      # Environment
+      MIX_ENV: "prod"
+    ports:
+      - "${APP_PORT:-4000}:4000"
+    volumes:
+      - ./priv/static:/app/auto_grand_premium_outlet/lib/auto_grand_premium_outlet_web-0.1.0/priv/static:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      ./auto_grand_premium_outlet/bin/auto_grand_premium_outlet eval 'AutoGrandPremiumOutlet.Release.migrate()' &&
+      ./auto_grand_premium_outlet/bin/auto_grand_premium_outlet start
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/vehicles/available"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
