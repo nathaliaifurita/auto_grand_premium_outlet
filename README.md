@@ -1,4 +1,4 @@
-# Auto Grand Premium Outlet API
+# 🚘 Auto Grand Premium Outlet API
 
 API REST para gestão de veículos, vendas e pagamentos desenvolvida em Elixir/Phoenix seguindo os princípios de **Clean Architecture** e **SOLID**.
 

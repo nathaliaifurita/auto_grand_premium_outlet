@@ -1,8 +1,8 @@
-# Build stage
-FROM elixir:1.14-alpine AS builder
-
-# Install build dependencies
-RUN apk add --no-cache build-base git
+# # Build stage
+# ---------- BUILD ----------
+FROM hexpm/elixir:1.16.0-erlang-26.2-debian-bookworm-20251229-slim AS builder
+ENV MIX_ENV=prod
+WORKDIR /app
 
 # Set working directory
 WORKDIR /app
@@ -11,43 +11,35 @@ WORKDIR /app
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Copy dependency files
+# Deps
 COPY mix.exs mix.lock ./
+COPY config config
+RUN mix deps.get --only prod
+RUN mix deps.compile
 
-# Install dependencies
-RUN mix deps.get --only prod && \
-    mix deps.compile
+# App
+COPY priv priv
+COPY lib lib
 
-# Copy application code
-COPY . .
+RUN mix compile
+RUN mix release
 
-# Compile application
-RUN MIX_ENV=prod mix compile
+# ---------- RUNTIME ----------
+FROM debian:bookworm-slim
 
-# Build release
-RUN MIX_ENV=prod mix release
-
-# Runtime stage
-FROM alpine:3.16
-
-# Install runtime dependencies
-RUN apk add --no-cache \
-    openssl \
-    ncurses-libs \
-    bash \
-    curl
+RUN apt-get update && \
+    apt-get install -y \
+      libstdc++6 \
+      libgcc-s1 \
+      openssl \
+      ca-certificates \
+      curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Copy release from builder
 COPY --from=builder /app/_build/prod/rel/auto_grand_premium_outlet ./auto_grand_premium_outlet
-
-# Create non-root user
-RUN addgroup -g 1000 appuser && \
-    adduser -D -u 1000 -G appuser appuser && \
-    chown -R appuser:appuser /app
-
-USER appuser
 
 # Expose port
 EXPOSE 4000
