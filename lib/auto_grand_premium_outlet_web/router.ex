@@ -1,6 +1,6 @@
 defmodule AutoGrandPremiumOutletWeb.Router do
   use AutoGrandPremiumOutletWeb, :router
-  alias PhoenixSwaggerUI.Plug, as: PhoenixSwaggerUI
+  # alias PhoenixSwaggerUI.Plug, as: PhoenixSwaggerUI
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -25,6 +25,7 @@ defmodule AutoGrandPremiumOutletWeb.Router do
 
     scope "/payments" do
       post "/", PaymentController, :create
+      get "/:payment_code", PaymentController, :index
       put "/:payment_code/confirm", PaymentController, :confirm
       put "/:payment_code/cancel", PaymentController, :cancel
     end

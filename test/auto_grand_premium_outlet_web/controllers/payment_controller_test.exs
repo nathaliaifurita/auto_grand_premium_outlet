@@ -161,6 +161,25 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
     end
   end
 
+  describe "GET /api/payments/:payment_code" do
+    test "returns payments state searched by payment_code", %{conn: conn} do
+      payment_code = "PAY123"
+
+      conn = get(conn, "/api/payments/#{payment_code}")
+      response = json_response(conn, 200)
+
+      assert response["payment_code"] == payment_code
+      assert response["status"] == "in_process"
+    end
+
+    test "returns payments error when payment is not found", %{conn: conn} do
+      payment_code = "pay_092"
+
+      conn = get(conn, "/api/payments/#{payment_code}")
+      assert json_response(conn, 404)["error"] == "payment_not_found"
+    end
+  end
+
   describe "PUT /api/payments/:payment_code/confirm" do
     test "confirms a payment", %{conn: conn} do
       payment_code = "PAY123"

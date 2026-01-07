@@ -4,13 +4,20 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
   alias AutoGrandPremiumOutlet.UseCases.Payments.{
     CreatePayment,
     ConfirmPayment,
-    CancelPayment
+    CancelPayment,
+    GetPayment
   }
 
   alias AutoGrandPremiumOutletWeb.PaymentSerializer
   alias AutoGrandPremiumOutletWeb.BaseController
 
   action_fallback AutoGrandPremiumOutletWeb.FallbackController
+
+  def index(conn, %{"payment_code" => code}) do
+    with {:ok, payment} <- GetPayment.execute(code, BaseController.payment_repo()) do
+      json(conn, PaymentSerializer.serialize(payment))
+    end
+  end
 
   def create(conn, params) do
     with {:ok, payment} <-
