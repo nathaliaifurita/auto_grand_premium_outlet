@@ -21,7 +21,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Sales.GetSale do
       {:error, :not_found} ->
         {:error, :sale_not_found}
 
-      {:error, :payment_not_found} ->
+      {:error, :sale_not_found} ->
         {:error, :sale_not_found}
     end
   end
