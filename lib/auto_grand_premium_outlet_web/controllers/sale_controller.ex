@@ -1,13 +1,18 @@
 defmodule AutoGrandPremiumOutletWeb.SaleController do
   use AutoGrandPremiumOutletWeb, :controller
 
-  alias AutoGrandPremiumOutlet.UseCases.Sales.CreateSale
-  alias AutoGrandPremiumOutlet.UseCases.Sales.CompleteSale
-  alias AutoGrandPremiumOutlet.UseCases.Sales.CancelSale
+  alias AutoGrandPremiumOutlet.UseCases.Sales.{CreateSale, CompleteSale, CancelSale, GetSale}
   alias AutoGrandPremiumOutletWeb.SaleSerializer
   alias AutoGrandPremiumOutletWeb.BaseController
 
   action_fallback AutoGrandPremiumOutletWeb.FallbackController
+
+  def index(conn, %{"sale_id" => sale_id}) do
+    with {:ok, sale} <-
+           GetSale.execute(sale_id, BaseController.sale_repo()) do
+      json(conn, SaleSerializer.serialize(sale))
+    end
+  end
 
   ## -------- CREATE --------
   # POST /api/sales

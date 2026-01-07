@@ -3,8 +3,6 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.GetPayment do
   Use case to retrieve a payment by payment_code.
   """
 
-  # alias AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo
-  # alias AutoGrandPremiumOutlet.Domain.Payments.Payment
   alias AutoGrandPremiumOutlet.Domain.Payment
   alias AutoGrandPremiumOutlet.Domain.Repositories.PaymentRepository
 

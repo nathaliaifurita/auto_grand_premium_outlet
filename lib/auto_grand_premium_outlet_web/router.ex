@@ -18,6 +18,7 @@ defmodule AutoGrandPremiumOutletWeb.Router do
     end
 
     scope "/sales" do
+      get "/:sale_id", SaleController, :index
       post "/", SaleController, :create
       put "/:sale_id/complete", SaleController, :complete
       put "/:sale_id/cancel", SaleController, :cancel

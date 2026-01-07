@@ -83,6 +83,26 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
       assert json_response(conn, 404)["error"] == "vehicle_not_found"
     end
   end
+  #
+  # -------- GET --------
+  #
+  describe "GET /api/sales/:sale_id" do
+    test "get a sale state by sale_id", %{conn: conn} do
+      sale_id = "sale-123"
+      conn =
+        get(conn, "/api/sales/#{sale_id}")
+
+      assert json_response(conn, 200)["status"] == "initiated"
+    end
+
+    test "returns error when sale is not_found", %{conn: conn} do
+      sale_id = "sale-010"
+      conn =
+        get(conn, "/api/sales/#{sale_id}")
+
+      assert json_response(conn, 404)["error"] == "sale_not_found"
+    end
+  end
 
   #
   # -------- COMPLETE --------
