@@ -20,6 +20,30 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
        }}
     end
 
+    def get("sale-2") do
+      {:ok,
+       %Sale{
+         id: "sale-2",
+         vehicle_id: "141",
+         buyer_cpf: "12345678909",
+         status: :initiated,
+         inserted_at: DateTime.utc_now(),
+         updated_at: nil
+       }}
+    end
+
+    def get("sale-3") do
+      {:ok,
+       %Sale{
+         id: "sale-3",
+         vehicle_id: "143",
+         buyer_cpf: "12345678909",
+         status: :initiated,
+         inserted_at: DateTime.utc_now(),
+         updated_at: nil
+       }}
+    end
+
     def get("sold") do
       {:ok,
        %Sale{
@@ -59,6 +83,32 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
          amount: 100_000,
          sale_id: "sale-1",
          payment_status: :paid,
+         inserted_at: DateTime.utc_now(),
+         updated_at: nil
+       }}
+    end
+
+    def get_by_payment_code("pay-to-be-cancelled") do
+      {:ok,
+       %Payment{
+         id: "p2",
+         payment_code: "pay-to-be-cancelled",
+         amount: 100_000,
+         sale_id: "sale-2",
+         payment_status: :in_process,
+         inserted_at: DateTime.utc_now(),
+         updated_at: nil
+       }}
+    end
+
+    def get_by_payment_code("cancelled") do
+      {:ok,
+       %Payment{
+         id: "p2",
+         payment_code: "cancelled",
+         amount: 100_000,
+         sale_id: "sale-3",
+         payment_status: :cancelled,
          inserted_at: DateTime.utc_now(),
          updated_at: nil
        }}
@@ -131,11 +181,12 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
   ## CONFIRM
   ## ------------------------------------------------------------------
 
-  describe "PUT /api/webhooks/payments/confirm" do
+  describe "PUT /api/webhooks/payments" do
     test "200 OK when payment is confirmed", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/confirm", %{
-          "payment_code" => "pay-ok"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "pay-ok",
+          "status" => "paid"
         })
 
       assert conn.status == 200
@@ -143,8 +194,9 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
 
     test "404 when payment is not found", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/confirm", %{
-          "payment_code" => "not-found"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "not-found",
+          "status" => "paid"
         })
 
       assert json_response(conn, 404)["error"] == "payment_not_found"
@@ -152,45 +204,42 @@ defmodule AutoGrandPremiumOutletWeb.PaymentWebhookControllerTest do
 
     test "422 when payment already paid", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/confirm", %{
-          "payment_code" => "paid"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "paid",
+          "status" => "paid"
         })
 
-      assert conn.status == 422
+      assert json_response(conn, 422)["error"] == "payment_already_paid"
     end
-  end
 
-  ## ------------------------------------------------------------------
-  ## CANCEL
-  ## ------------------------------------------------------------------
-
-  describe "PUT /api/webhooks/payments/cancel" do
     test "200 OK when payment is cancelled", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/cancel", %{
-          "payment_code" => "pay-ok"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "pay-to-be-cancelled",
+          "status" => "cancelled"
         })
 
       assert conn.status == 200
     end
 
-    test "404 when cancelling non-existing payment", %{conn: conn} do
+    test "422 when cancelling already cancelled payment", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/cancel", %{
-          "payment_code" => "nope"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "cancelled",
+          "status" => "cancelled"
         })
 
-      #   assert conn.status == 404
-      assert json_response(conn, 404)["error"] == "payment_not_found"
+      assert json_response(conn, 422)["error"] == "payment_already_cancelled"
     end
 
-    test "422 when cancelling already paid payment", %{conn: conn} do
+    test "422 for an invalid payment state", %{conn: conn} do
       conn =
-        put(conn, "/api/webhooks/payments/cancel", %{
-          "payment_code" => "paid"
+        put(conn, "/api/webhooks/payments", %{
+          "payment_code" => "cancelled",
+          "status" => "progressing"
         })
 
-      assert conn.status == 422
+      assert json_response(conn, 422)["error"] == "invalid_payment_state"
     end
   end
 end

@@ -83,12 +83,14 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
       assert json_response(conn, 404)["error"] == "vehicle_not_found"
     end
   end
+
   #
   # -------- GET --------
   #
   describe "GET /api/sales/:sale_id" do
     test "get a sale state by sale_id", %{conn: conn} do
       sale_id = "sale-123"
+
       conn =
         get(conn, "/api/sales/#{sale_id}")
 
@@ -97,48 +99,9 @@ defmodule AutoGrandPremiumOutletWeb.SaleControllerTest do
 
     test "returns error when sale is not_found", %{conn: conn} do
       sale_id = "sale-010"
+
       conn =
         get(conn, "/api/sales/#{sale_id}")
-
-      assert json_response(conn, 404)["error"] == "sale_not_found"
-    end
-  end
-
-  #
-  # -------- COMPLETE --------
-  #
-
-  describe "PUT /api/sales/:sale_id/complete" do
-    test "completes a sale", %{conn: conn} do
-      conn =
-        put(conn, "/api/sales/sale-123/complete")
-
-      assert json_response(conn, 200)["status"] == "completed"
-    end
-
-    test "returns 404 when sale is not found", %{conn: conn} do
-      conn =
-        put(conn, "/api/sales/invalid/complete")
-
-      assert json_response(conn, 404)["error"] == "sale_not_found"
-    end
-  end
-
-  #
-  # -------- CANCEL --------
-  #
-
-  describe "PUT /api/sales/:sale_id/cancel" do
-    test "cancels a sale", %{conn: conn} do
-      conn =
-        put(conn, "/api/sales/sale-123/cancel")
-
-      assert json_response(conn, 200)["status"] == "cancelled"
-    end
-
-    test "returns 404 when sale is not found", %{conn: conn} do
-      conn =
-        put(conn, "/api/sales/invalid/cancel")
 
       assert json_response(conn, 404)["error"] == "sale_not_found"
     end

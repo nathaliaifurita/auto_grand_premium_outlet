@@ -20,20 +20,15 @@ defmodule AutoGrandPremiumOutletWeb.Router do
     scope "/sales" do
       get "/:sale_id", SaleController, :index
       post "/", SaleController, :create
-      put "/:sale_id/complete", SaleController, :complete
-      put "/:sale_id/cancel", SaleController, :cancel
     end
 
     scope "/payments" do
       post "/", PaymentController, :create
       get "/:payment_code", PaymentController, :index
-      put "/:payment_code/confirm", PaymentController, :confirm
-      put "/:payment_code/cancel", PaymentController, :cancel
     end
 
     scope "/webhooks" do
-      put "/payments/confirm", PaymentWebhookController, :confirm
-      put "/payments/cancel", PaymentWebhookController, :cancel
+      put "/payments", PaymentWebhookController, :handle
     end
   end
 

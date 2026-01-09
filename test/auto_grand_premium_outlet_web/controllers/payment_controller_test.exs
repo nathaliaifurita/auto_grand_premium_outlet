@@ -179,28 +179,4 @@ defmodule AutoGrandPremiumOutletWeb.PaymentControllerTest do
       assert json_response(conn, 404)["error"] == "payment_not_found"
     end
   end
-
-  describe "PUT /api/payments/:payment_code/confirm" do
-    test "confirms a payment", %{conn: conn} do
-      payment_code = "PAY123"
-
-      conn = put(conn, "/api/payments/#{payment_code}/confirm")
-      response = json_response(conn, 200)
-
-      assert response["payment_code"] == payment_code
-      assert response["status"] == "paid"
-    end
-  end
-
-  describe "PUT /api/payments/:payment_code/cancel" do
-    test "cancels a payment", %{conn: conn} do
-      payment_code = "PAY456"
-
-      conn = put(conn, "/api/payments/#{payment_code}/cancel")
-      response = json_response(conn, 200)
-
-      assert response["payment_code"] == payment_code
-      assert response["status"] == "cancelled"
-    end
-  end
 end

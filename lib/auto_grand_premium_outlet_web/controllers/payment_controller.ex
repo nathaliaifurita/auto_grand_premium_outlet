@@ -53,6 +53,7 @@ defmodule AutoGrandPremiumOutletWeb.PaymentController do
            CancelPayment.execute(
              code,
              BaseController.payment_repo(),
+             BaseController.sale_repo(),
              BaseController.clock()
            ) do
       json(conn, PaymentSerializer.serialize(payment))

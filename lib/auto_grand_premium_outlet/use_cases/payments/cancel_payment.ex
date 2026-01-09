@@ -1,6 +1,6 @@
 defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
-  alias AutoGrandPremiumOutlet.Domain.Payment
-  alias AutoGrandPremiumOutlet.Domain.Repositories.PaymentRepository
+  alias AutoGrandPremiumOutlet.Domain.{Payment, Sale}
+  alias AutoGrandPremiumOutlet.Domain.Repositories.{PaymentRepository, SaleRepository}
   alias AutoGrandPremiumOutlet.Domain.Services.Clock
 
   @type error ::
@@ -10,29 +10,21 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
           | :invalid_payment_state
           | :persistence_error
 
-  @spec execute(String.t(), PaymentRepository.t(), Clock.t()) ::
+  @spec execute(String.t(), PaymentRepository.t(), SaleRepository.t(), Clock.t()) ::
           {:ok, Payment.t()} | {:error, error()}
-  def execute(payment_code, payment_repo, clock) do
+  def execute(payment_code, payment_repo, sale_repo, clock) do
     with {:ok, payment} <- fetch_payment(payment_code, payment_repo),
          :ok <- validate_payment_state(payment),
-         {:ok, payment} <- Payment.cancel(payment, clock.now()),
-         {:ok, payment} <- payment_repo.update(payment) do
-      {:ok, payment}
+         {:ok, sale} <- fetch_sale(payment.sale_id, sale_repo),
+         :ok <- validate_sale_state(sale),
+         {:ok, cancelled_payment} <- Payment.cancel(payment, clock.now()),
+         {:ok, cancelled_sale} <- Sale.cancel(sale, clock.now()),
+         {:ok, _} <- sale_repo.update(cancelled_sale),
+         {:ok, updated_payment} <- payment_repo.update(cancelled_payment) do
+      {:ok, updated_payment}
     else
-      {:error, :payment_not_found} ->
-        {:error, :payment_not_found}
-
-      {:error, :payment_already_paid} ->
-        {:error, :payment_already_paid}
-
-      {:error, :payment_already_cancelled} ->
-        {:error, :payment_already_cancelled}
-
-      {:error, :invalid_payment_state} ->
-        {:error, :invalid_payment_state}
-
-      {:error, _} ->
-        {:error, :persistence_error}
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
@@ -46,8 +38,18 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
       {:error, :payment_not_found} ->
         {:error, :payment_not_found}
 
+      {:error, :not_found} ->
+        {:error, :payment_not_found}
+
       _ ->
         {:error, :payment_not_found}
+    end
+  end
+
+  defp fetch_sale(sale_id, sale_repo) do
+    case sale_repo.get(sale_id) do
+      {:ok, sale} -> {:ok, sale}
+      {:error, :not_found} -> {:error, :sale_not_found}
     end
   end
 
@@ -62,4 +64,16 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.CancelPayment do
 
   defp validate_payment_state(%Payment{payment_status: _status}),
     do: {:error, :invalid_payment_state}
+
+  defp validate_sale_state(%Sale{status: :completed}),
+    do: {:error, :sale_already_completed}
+
+  defp validate_sale_state(%Sale{status: :cancelled}),
+    do: {:error, :sale_already_cancelled}
+
+  defp validate_sale_state(%Sale{status: :initiated}),
+    do: :ok
+
+  defp validate_sale_state(_),
+    do: {:error, :invalid_sale_state}
 end

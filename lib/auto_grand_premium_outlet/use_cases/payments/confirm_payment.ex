@@ -13,7 +13,7 @@ defmodule AutoGrandPremiumOutlet.UseCases.Payments.ConfirmPayment do
           :payment_not_found
           | :payment_already_paid
           | :payment_already_cancelled
-          | :invalid_state
+          | :invalid_payment_state
           | :sale_not_found
           | :sale_already_completed
           | :sale_already_cancelled
