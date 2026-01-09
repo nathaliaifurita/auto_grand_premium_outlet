@@ -373,7 +373,7 @@ curl -X PUT http://localhost:4000/api/webhooks/payments \
 ### Build da Imagem
 
 ```bash
-docker build -t auto-grand-premium-outlet:1.0.1 .
+docker build -t auto-grand-premium-outlet:1.0.2 .
 ```
 
 ### Executar Container
@@ -382,7 +382,7 @@ docker build -t auto-grand-premium-outlet:1.0.1 .
 docker run -p 4000:4000 \
   -e DATABASE_URL="ecto://postgres:postgres@host.docker.internal:5432/auto_grand_premium_outlet_prod" \
   -e SECRET_KEY_BASE="your-secret-key-base" \
-  auto-grand-premium-outlet:1.0.1
+  auto-grand-premium-outlet:1.0.2
 ```
 
 ## ☸️ Kubernetes
