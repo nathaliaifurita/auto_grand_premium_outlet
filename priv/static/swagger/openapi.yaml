@@ -25,21 +25,7 @@ paths:
           $ref: '#/components/responses/VehicleListResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  /vehicles:
-    post:
-      tags: [Vehicles]
-      summary: Create a new vehicle
-      requestBody:
-        $ref: '#/components/requestBodies/VehicleCreate'
-      responses:
-        '201':
-          $ref: '#/components/responses/VehicleResponse'
-        '422':
-          $ref: '#/components/responses/ValidationError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+  
   /vehicles/sold:
     get:
       tags: [Vehicles]
@@ -50,6 +36,32 @@ paths:
           $ref: '#/components/responses/VehicleListResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /vehicles:
+    post:
+      tags: [Vehicles]
+      summary: Create a new vehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleInput'
+            example:
+              brand: "Toyota"
+              model: "Corolla"
+              year: 2022
+              color: "Preto"
+              price: 120000
+              license_plate: "ABC1D23"
+      responses:
+        '201':
+          $ref: '#/components/responses/VehicleResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
 
   /vehicles/{id}:
     get:
@@ -62,6 +74,8 @@ paths:
           $ref: '#/components/responses/VehicleResponse'
         '404':
           $ref: '#/components/responses/NotFoundError'
+        '422':
+          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -71,7 +85,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/VehicleId'
       requestBody:
-        $ref: '#/components/requestBodies/VehicleUpdate'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          example:
+            brand: "Toyota"
+            model: "Corolla"
+            year: 2022
+            color: "Branco"
+            price: 130000
+            license_plate: "ABC1D23"
       responses:
         '200':
           $ref: '#/components/responses/VehicleResponse'
@@ -81,13 +106,20 @@ paths:
           $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
+  
   /sales:
     post:
       tags: [Sales]
       summary: Create a new sale
       requestBody:
-        $ref: '#/components/requestBodies/SaleCreate'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaleInput'
+            example:
+              vehicle_id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
+              buyer_cpf: "12345678901"
       responses:
         '201':
           $ref: '#/components/responses/SaleResponse'
@@ -98,59 +130,33 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /sales/{sale_id}:
     get:
       tags: [Sales]
-      summary: Gets the sale
-      requestBody:
-        $ref: 
+      summary: Get sale by ID
+      parameters:
+        - $ref: '#/components/parameters/SaleId'
       responses:
         '200':
-          $ref:
+          $ref: '#/components/responses/SaleResponse'
         '404':
           $ref: '#/components/responses/NotFoundError'
-        '422':
-          $ref: '#/components/responses/ValidationError'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  # /sales/{sale_id}/complete:
-  #   put:
-  #     tags: [Sales]
-  #     summary: Complete a sale
-  #     parameters:
-  #       - $ref: '#/components/parameters/SaleId'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/SaleResponse'
-  #       '404':
-  #         $ref: '#/components/responses/NotFoundError'
-  #       '422':
-  #         $ref: '#/components/responses/ValidationError'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
-
-  # /sales/{sale_id}/cancel:
-  #   put:
-  #     tags: [Sales]
-  #     summary: Cancel a sale
-  #     parameters:
-  #       - $ref: '#/components/parameters/SaleId'
-  #     responses:
-  #       '200':
-  #         $ref: '#/components/responses/SaleResponse'
-  #       '404':
-  #         $ref: '#/components/responses/NotFoundError'
-  #       '422':
-  #         $ref: '#/components/responses/ValidationError'
-  #       '500':
-  #         $ref: '#/components/responses/InternalServerError'
 
   /payments:
     post:
       tags: [Payments]
       summary: Create payment
       requestBody:
-        $ref: '#/components/requestBodies/PaymentCreate'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentInput'
+            example:
+              sale_id: "6344c51d-467b-4a93-8a43-8361c987f156"
+              amount: 120000
       responses:
         '201':
           $ref: '#/components/responses/PaymentResponse'
@@ -161,33 +167,85 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /webhooks/payments:
-    put:
-      tags: [Webhooks]
-      summary: Handles the payment received according to the status
-      description: Webhook endpoint for external payment providers to handle a payment. Returns a simple success message.
-      requestBody:
-        $ref: '#/components/requestBodies/PaymentWebhookRequestBody'
+  /payments/{payment_code}:
+    get:
+      tags: [Payments]
+      summary: Get payment by code
+      parameters:
+        - $ref: '#/components/parameters/PaymentCode'
       responses:
         '200':
-          description: Payment received successfully
-          content:
-            text/plain:
-              schema:
-                type: string
-              examples:
-                confirmed:
-                  value: "Confirmed Payment"
-                cancelled:
-                  value: "Cancelled Payment"
-                ignored:
-                  value: "No action taken"
+          $ref: '#/components/responses/PaymentResponse'
         '404':
           $ref: '#/components/responses/NotFoundError'
         '422':
           $ref: '#/components/responses/ValidationError'
         '500':
-          $ref: '#/components/responses/InternalServerError'  
+          $ref: '#/components/responses/InternalServerError'
+
+  /webhooks/payments: 
+    put:
+      tags: [Webhooks]
+      summary: Handles the payment received according to the status
+      description: Webhook endpoint for external payment providers to handle a payment. Returns a simple success message.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [payment_code, status]
+              properties:
+                payment_code:
+                  type: string
+                  example: 8111389F0847EB1B
+                status:
+                  type: string
+                  enum: [paid, approved, rejected, cancelled, in_process, pending]
+      responses:
+        '200':
+          description: Payment received successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Confirmed Payment"
+              examples:
+                confirmed:
+                  value:
+                    message: "Confirmed Payment"
+                cancelled:
+                  value:
+                    message: "Cancelled Payment"
+                ignored:
+                  value:
+                    message: "No action taken"
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '422':
+          description: Business rule error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                already_paid:
+                  value:
+                    error: "payment_already_paid"
+                    message: "payment_already_paid"
+                already_cancelled:
+                  value:
+                    error: "payment_already_cancelled"
+                    message: "payment_already_cancelled"
+                invalid_state:
+                  value:
+                    error: "invalid_payment_state"
+                    message: "invalid_payment_state"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
 
@@ -199,7 +257,7 @@ components:
       required: true
       schema:
         type: string
-        example: "135"
+        example: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
 
     SaleId:
       name: sale_id
@@ -207,7 +265,7 @@ components:
       required: true
       schema:
         type: string
-        example: "sale_123"
+        example: "6344c51d-467b-4a93-8a43-8361c987f156"
 
     PaymentCode:
       name: payment_code
@@ -215,81 +273,19 @@ components:
       required: true
       schema:
         type: string
-        example: "pay_456"
-
-  ## 🔹 REQUEST BODIES
-  requestBodies:
-    VehicleCreate:
-      required: true
-      content:
+        example: "8111389F0847EB1B"
         application/json:
           schema:
-            $ref: '#/components/schemas/VehicleInput'
-          example:
-            brand: "Toyota"
-            model: "Corolla"
-            year: 2022
-            color: "Preto"
-            price: 120000
-            license_plate: "ABC1D23"
-
-    VehicleUpdate:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/VehicleInput'
-          example:
-            brand: "Toyota"
-            model: "Corolla"
-            year: 2022
-            color: "Branco"
-            price: 130000
-            license_plate: "ABC1D23"
-
-    SaleCreate:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/SaleInput'
-          example:
-            vehicle_id: "135"
-            buyer_cpf: "12345678901"
-
-    PaymentCreate:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PaymentInput'
-          example:
-            sale_id: "sale_123"
-            amount: 120000
-
-    PaymentWebhookRequestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - payment_code
-                - status
-              properties:
-                payment_code:
-                  type: string
-                  example: pay-ok
-                status:
-                  type: string
-                  description: Status enviado pelo provedor
-                  enum:
-                    - paid
-                    - approved
-                    - rejected
-                    - cancelled
-                    - in_process
-                    - pending
+            type: object
+            required: [payment_code, status]
+            properties:
+              payment_code:
+                type: string
+                example: 8111389F0847EB1B
+              status:
+                type: string
+                description: State sent by provider
+                enum: [paid, approved, rejected, cancelled, in_process, pending]
 
   ## 🔹 RESPONSES
   responses:
@@ -303,7 +299,7 @@ components:
             available_vehicle:
               summary: Available vehicle
               value:
-                id: "135"
+                id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
                 brand: "Toyota"
                 model: "Corolla"
                 year: 2022
@@ -315,15 +311,15 @@ components:
             sold_vehicle:
               summary: Sold vehicle
               value:
-                id: "136"
-                brand: "Honda"
-                model: "Civic"
-                year: 2021
-                color: "Branco"
-                price: 90000
-                license_plate: "XYZ2A34"
+                id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
+                brand: "Toyota"
+                model: "Corolla"
+                year: 2022
+                color: "Preto"
+                price: 120000
+                license_plate: "ABC1D23"
                 status: "sold"
-                sold_at: "2024-01-15T10:30:00Z"
+                sold_at: null
 
     VehicleListResponse:
       description: List of vehicles
@@ -334,22 +330,13 @@ components:
             items:
               $ref: '#/components/schemas/Vehicle'
           example:
-            - id: "135"
+              id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
               brand: "Toyota"
               model: "Corolla"
               year: 2022
               color: "Preto"
               price: 120000
               license_plate: "ABC1D23"
-              status: "available"
-              sold_at: null
-            - id: "136"
-              brand: "Honda"
-              model: "Civic"
-              year: 2021
-              color: "Branco"
-              price: 90000
-              license_plate: "XYZ2A34"
               status: "available"
               sold_at: null
 
@@ -363,8 +350,8 @@ components:
             initiated_sale:
               summary: Initiated sale
               value:
-                id: "sale_123"
-                vehicle_id: "135"
+                id: "6344c51d-467b-4a93-8a43-8361c987f156"
+                vehicle_id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
                 buyer_cpf: "12345678901"
                 status: "initiated"
                 inserted_at: "2024-01-15T10:00:00Z"
@@ -372,8 +359,8 @@ components:
             completed_sale:
               summary: Completed sale
               value:
-                id: "sale_123"
-                vehicle_id: "135"
+                id: "6344c51d-467b-4a93-8a43-8361c987f156"
+                vehicle_id: "bb1fcd82-1321-4973-bbf5-13ded1b6dac1"
                 buyer_cpf: "12345678901"
                 status: "completed"
                 inserted_at: "2024-01-15T10:00:00Z"
@@ -389,21 +376,40 @@ components:
             in_process_payment:
               summary: Payment in process
               value:
-                id: "pay_123"
-                payment_code: "pay_456"
+                id: "cb5c5791-80cb-4516-b4b9-d0316a41d342"
+                payment_code: "8111389F0847EB1B"
                 amount: 120000
-                sale_id: "sale_123"
+                sale_id: "6344c51d-467b-4a93-8a43-8361c987f156"
                 status: "in_process"
                 inserted_at: "2024-01-15T10:00:00Z"
             paid_payment:
               summary: Paid payment
               value:
-                id: "pay_123"
-                payment_code: "pay_456"
+                id: "cb5c5791-80cb-4516-b4b9-d0316a41d342"
+                payment_code: "8111389F0847EB1B"
                 amount: 120000
-                sale_id: "sale_123"
+                sale_id: "6344c51d-467b-4a93-8a43-8361c987f156"
                 status: "paid"
                 inserted_at: "2024-01-15T10:00:00Z"
+            cancelled_payment:
+              summary: Cancelled payment
+              value:
+                id: "cb5c5791-80cb-4516-b4b9-d0316a41d342"
+                payment_code: "8111389F0847EB1B"
+                amount: 120000
+                sale_id: "6344c51d-467b-4a93-8a43-8361c987f156"
+                status: "cancelled"
+                inserted_at: "2024-01-15T10:00:00Z"
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "payment_not_found"
+            message: "Resource not found"
 
     ValidationError:
       description: Validation error
@@ -413,17 +419,7 @@ components:
             $ref: '#/components/schemas/Error'
           example:
             error: "validation_error"
-            message: "Invalid price"
-
-    NotFoundError:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "not_found"
-            message: "Resource not found"
+            message: "Invalid input"
 
     InternalServerError:
       description: Internal server error
@@ -434,7 +430,6 @@ components:
           example:
             error: "internal_server_error"
             message: "An unexpected error occurred"
-
   ## 🔹 SCHEMAS
   schemas:
     Vehicle:
@@ -486,24 +481,12 @@ components:
       type: object
       required: [brand, model, year, color, price, license_plate]
       properties:
-        brand:
-          type: string
-          example: "Toyota"
-        model:
-          type: string
-          example: "Corolla"
-        year:
-          type: integer
-          example: 2022
-        color:
-          type: string
-          example: "Preto"
-        price:
-          type: number
-          example: 120000
-        license_plate:
-          type: string
-          example: "ABC1D23"
+        brand: { type: string }
+        model: { type: string }
+        year:  { type: integer }
+        color: { type: string }
+        price: { type: number }
+        license_plate: { type: string }
       example:
         brand: "Toyota"
         model: "Corolla"
@@ -605,20 +588,6 @@ components:
       example:
         sale_id: "6344c51d-467b-4a93-8a43-8361c987f156"
         amount: 120000
-
-    WebhookPaymentInput:
-      type: object
-      required: [payment_code, status]
-      properties:
-        payment_code:
-          type: string
-          example: "8111389F0847EB1B"
-        status:
-          type: string
-          example: "paid"
-      example:
-        sale_id: "8111389F0847EB1B"
-        status: "paid"
 
     Error:
       type: object

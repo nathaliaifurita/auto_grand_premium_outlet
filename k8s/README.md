@@ -27,10 +27,10 @@ Este diretório contém todos os manifests Kubernetes necessários para implanta
 # Gere um secret key base
 mix phx.gen.secret
 
-# Edite o arquivo secret.yaml e atualize:
-# - POSTGRES_PASSWORD
-# - SECRET_KEY_BASE
-# - DATABASE_URL (com a senha correta)
+Edite o arquivo secret.yaml e atualize:
+- POSTGRES_PASSWORD
+- SECRET_KEY_BASE
+- DATABASE_URL (com a senha correta)
 ```
 
 2. **Crie o namespace**:

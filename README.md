@@ -4,18 +4,24 @@ API REST para gestão de veículos, vendas e pagamentos desenvolvida em Elixir/P
 
 ## 📋 Índice
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Tecnologias](#tecnologias)
-- [Arquitetura](#arquitetura)
-- [Instalação](#instalação)
-- [Executando o Projeto](#executando-o-projeto)
-- [Testes](#testes)
-- [API Endpoints](#api-endpoints)
-- [Exemplos de Uso](#exemplos-de-uso)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Princípios e Padrões](#princípios-e-padrões)
-- [Documentação](#documentação)
-- [Contribuição](#contribuição)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Tecnologias](#-tecnologias)
+- [Arquitetura e Estrutura do Projeto](#-arquitetura-e-estrutura-do-projeto)
+- [Princípios e Padrões](#-princípios-e-padrões)
+- [Instalação](#-instalação)
+- [Executando o Projeto](#-executando-o-projeto)
+- [Testes](#-testes)
+- [API Endpoints](#-api-endpoints)
+- [Exemplos de Uso](#-exemplos-de-uso)
+- [Docker](#-docker)
+- [Kubernetes](#-kubernetes)
+- [Documentação](#-documentação)
+- [Configuração](#-configuração)
+- [Armazenamento](#-armazenamento)
+- [Status do Projeto](#-status-do-projeto)
+- [Contribuição](#-contribuição)
+- [Licença](#-licença)
+- [Autora](#-autora)
 
 ## 🚀 Sobre o Projeto
 
@@ -36,39 +42,112 @@ O projeto foi desenvolvido seguindo rigorosamente os princípios de **Clean Arch
 - **Phoenix Swagger** para documentação da API
 - **OpenAPI 3.0** para especificação da API
 
-## 🏗 Arquitetura
+## 🏗 Arquitetura e Estrutura do Projeto
 
-O projeto segue **Clean Architecture** com separação clara de responsabilidades:
+O projeto segue **Clean Architecture** com separação clara de responsabilidades entre camadas, e o código está organizado para refletir essas camadas na estrutura de diretórios.
 
-```
+```text
 Domain (Núcleo)
-  ├── Entities (Payment, Sale, Vehicle)
+  ├── Entities
+  │     - Payment, Sale, Vehicle
+  │     - Regras de negócio e invariantes
   ├── Repositories (Ports/Behaviours)
-  └── Services (Ports: Clock, IdGenerator, CodeGenerator)
+  │     - Contratos de acesso a dados (ex.: VehicleRepository)
+  └── Services (Ports)
+        - Clock, IdGenerator, CodeGenerator
 
 Use Cases (Aplicação)
   ├── Payments
   ├── Sales
   ├── Vehicles
-  ├── ParamsNormalizer
-  └── VehicleFilter
+  ├── ParamsNormalizer        (normalização de parâmetros de entrada)
+  └── VehicleFilter           (filtragem/ordenação de veículos)
 
 Infrastructure (Adaptadores)
   ├── Repositories (Implementações)
+  │     - Implementações concretas dos repositories (ex.: Agents em memória)
   └── Services (Implementações)
+        - Implementações reais de Clock, IdGenerator, CodeGenerator
 
 Web (Interface)
-  ├── Controllers
-  ├── Serializers
-  └── BaseController
+  ├── Controllers             (exposição HTTP da API)
+  ├── Serializers             (conversão Domain → JSON)
+  └── BaseController          (injeção de dependências para os use cases)
 ```
+
+Essa arquitetura se reflete diretamente na estrutura de pastas:
+
+```text
+lib/
+├── auto_grand_premium_outlet/
+│   ├── domain/                     # Camada de Domínio (Núcleo)
+│   │   ├── entities/               # Entities: Payment, Sale, Vehicle
+│   │   ├── repositories/           # Repositories (Ports/Behaviours)
+│   │   └── services/               # Services (Ports: Clock, IdGenerator, CodeGenerator)
+│   ├── use_cases/                  # Camada de Aplicação
+│   │   ├── payments/               # Casos de uso de pagamentos
+│   │   ├── sales/                  # Casos de uso de vendas
+│   │   ├── vehicles/               # Casos de uso de veículos
+│   │   ├── params_normalizer.ex    # Normalização de parâmetros de entrada
+│   │   └── vehicle_filter.ex       # Filtragem/ordenação de veículos
+│   └── infra/                      # Camada de Infraestrutura (Adaptadores)
+│       ├── repositories/           # Implementações concretas dos repositórios
+│       └── services/               # Implementações concretas dos serviços
+└── auto_grand_premium_outlet_web/  # Camada Web (Interface)
+    ├── controllers/                # Controllers HTTP
+    ├── serializers/                # Serializers Domain → JSON
+    └── base_controller.ex          # BaseController (injeção de dependências)
+
+test/
+├── auto_grand_premium_outlet/
+│   ├── domain/                     # Testes das entidades (Domain)
+│   └── use_cases/                  # Testes dos casos de uso (Application)
+└── auto_grand_premium_outlet_web/
+    └── controllers/                # Testes dos controllers (Web)
+```
+
+## 🎯 Princípios e Padrões
 
 ### Princípios Aplicados
 
-- ✅ **Dependency Rule**: Dependências apontam para dentro (Domain é independente)
-- ✅ **Independência de Frameworks**: Domain não conhece Phoenix, Ecto, etc.
-- ✅ **Independência de UI**: Use cases podem ser usados por CLI, API, etc.
-- ✅ **Independência de Banco de Dados**: Repositórios são abstrações
+- ✅ **Dependency Rule**: Dependências sempre apontam para dentro (o Domain não depende de camadas externas)
+- ✅ **Independência de Frameworks**: O núcleo de domínio não conhece Phoenix, Ecto, HTTP ou JSON
+- ✅ **Independência de UI**: Use cases podem ser reutilizados por API HTTP, CLI, jobs, etc.
+- ✅ **Independência de Banco de Dados**: Repositórios são abstrações (behaviours); a implementação pode trocar de Agents em memória para Postgres sem impactar o domínio
+
+### Clean Architecture
+
+- ✅ **Separação clara de camadas**: Domain, Use Cases, Infrastructure e Web
+- ✅ **Domínio 100% independente**: Regras de negócio isoladas de detalhes de infra
+- ✅ **Ports & Adapters**: Repositories e Services definidos como comportamentos (ports), com implementações concretas na camada de infraestrutura
+- ✅ **Injeção de Dependências**: `BaseController` centraliza como os casos de uso recebem repositórios e serviços concretos
+
+### SOLID
+
+- ✅ **SRP (Single Responsibility Principle)**  
+  Cada módulo tem uma responsabilidade clara (ex.: `ParamsNormalizer` só normaliza parâmetros; `VehicleFilter` só filtra/ordena veículos).
+- ✅ **OCP (Open/Closed Principle)**  
+  Comportamentos e use cases são abertos para extensão (novas implementações de repos/services) sem precisar modificar o domínio.
+- ✅ **LSP (Liskov Substitution Principle)**  
+  Implementações concretas podem substituir os behaviours (`VehicleRepository`, `SaleRepository`, `PaymentRepository`) sem quebrar consumidores.
+- ✅ **ISP (Interface Segregation Principle)**  
+  Interfaces focadas e mínimas, separando responsabilidades em behaviours específicos.
+- ✅ **DIP (Dependency Inversion Principle)**  
+  Use cases dependem de **abstrações** (behaviours de repositórios e serviços), nunca de implementações concretas.
+
+### DRY (Don't Repeat Yourself)
+
+- ✅ **BaseController**: Centraliza helpers de dependências (repos/services), evitando repetição em cada controller.
+- ✅ **VehicleFilter**: Centraliza a lógica de filtragem e ordenação de veículos.
+- ✅ **ParamsNormalizer**: Centraliza normalização de parâmetros de entrada (tipos, chaves, conversões).
+- ✅ **Serializers**: Reuso de lógica de transformação Domain → JSON entre endpoints.
+
+### Padrões de Código
+
+- Siga os princípios de Clean Architecture e SOLID descritos acima
+- Mantenha e amplie a cobertura de testes automatizados
+- Documente mudanças significativas (README, comentários e/ou docs)
+- Use `mix format` antes de commitar para manter o estilo consistente
 
 ## 📦 Instalação
 
@@ -179,23 +258,20 @@ mix test test/auto_grand_premium_outlet/domain/payment_test.exs
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | `POST` | `/api/sales` | Cria uma nova venda |
-| `PUT` | `/api/sales/:sale_id/complete` | Completa uma venda |
-| `PUT` | `/api/sales/:sale_id/cancel` | Cancela uma venda |
+| `GET` | `/api/sales/:sale_id` | Consulta uma venda |
 
 ### Pagamentos
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | `POST` | `/api/payments` | Cria um novo pagamento |
-| `PUT` | `/api/payments/:payment_code/confirm` | Confirma um pagamento |
-| `PUT` | `/api/payments/:payment_code/cancel` | Cancela um pagamento |
+| `GET` | `/api/payments/:payment_code` | Consulta um pagamento |
 
 ### Webhooks
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| `PUT` | `/api/webhooks/payments/confirm` | Webhook para confirmar pagamento |
-| `PUT` | `/api/webhooks/payments/cancel` | Webhook para cancelar pagamento |
+| `PUT` | `/api/webhooks/payments` | Webhook para confirmar/cancelar pagamento |
 
 ## 💡 Exemplos de Uso
 
@@ -237,11 +313,22 @@ PAYMENT_RESPONSE=$(curl -s -X POST http://localhost:4000/api/payments \
 PAYMENT_CODE=$(echo $PAYMENT_RESPONSE | jq -r '.payment_code')
 echo "Payment Code: $PAYMENT_CODE"
 
-# 4. Confirmar o pagamento (marca o veículo como vendido)
-curl -X PUT "http://localhost:4000/api/payments/$PAYMENT_CODE/confirm" \
-  -H 'Content-Type: application/json'
+# 4. Confirmar o pagamento pelo webhooks
+WEBHOOKS_RESPONSE=$(curl -s -X PUT
+  http://localhost:4000/api/webhooks/payments \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"payment_code\": \"$PAYMENT_CODE\",
+    \"status\": "paid"
+  }")
 
-# 5. Verificar se o veículo foi marcado como vendido
+# 5. Verificar o pagamento atualizado
+curl -s "http://localhost:4000/api/payments/$PAYMENT_CODE" | jq '.status'
+
+# 6. Verificar a venda atualizada
+curl -s "http://localhost:4000/api/sales/$SALE_ID" | jq '.status'
+
+# 7. Verificar se o veículo foi marcado como vendido
 curl -s "http://localhost:4000/api/vehicles/$VEHICLE_ID" | jq '.status'
 # Resultado: "sold"
 ```
@@ -250,6 +337,13 @@ curl -s "http://localhost:4000/api/vehicles/$VEHICLE_ID" | jq '.status'
 
 ```bash
 curl -X GET http://localhost:4000/api/vehicles/available \
+  -H 'accept: application/json' | jq .
+```
+
+### Listar Veículos Vendidos
+
+```bash
+curl -X GET http://localhost:4000/api/vehicles/sold \
   -H 'accept: application/json' | jq .
 ```
 
@@ -266,65 +360,13 @@ curl -X PUT "http://localhost:4000/api/vehicles/$VEHICLE_ID" \
 ### Webhook de Confirmação de Pagamento
 
 ```bash
-curl -X PUT http://localhost:4000/api/webhooks/payments/confirm \
+curl -X PUT http://localhost:4000/api/webhooks/payments \
   -H 'Content-Type: application/json' \
   -d '{
-    "payment_code": "pay_456"
+    "payment_code": "pay_456",
+    "status": "paid"
   }'
 ```
-
-## 📁 Estrutura do Projeto
-
-```
-lib/
-├── auto_grand_premium_outlet/
-│   ├── domain/                    # Camada de Domínio (Núcleo)
-│   │   ├── entities/             # Entidades de negócio
-│   │   ├── repositories/          # Ports (Behaviours)
-│   │   └── services/             # Serviços de domínio (Ports)
-│   ├── use_cases/                # Camada de Aplicação
-│   │   ├── payments/
-│   │   ├── sales/
-│   │   ├── vehicles/
-│   │   ├── params_normalizer.ex
-│   │   └── vehicle_filter.ex
-│   └── infra/                     # Camada de Infraestrutura
-│       ├── repositories/          # Implementações dos repositórios
-│       └── services/              # Implementações dos serviços
-└── auto_grand_premium_outlet_web/ # Camada Web (Interface)
-    ├── controllers/
-    ├── serializers/
-    └── base_controller.ex
-
-test/
-├── auto_grand_premium_outlet/
-│   ├── domain/                   # Testes das entidades
-│   └── use_cases/                # Testes dos use cases
-└── auto_grand_premium_outlet_web/
-    └── controllers/              # Testes dos controllers
-```
-
-## 🎯 Princípios e Padrões
-
-### Clean Architecture
-
-- ✅ **Domain 100% independente**: Não depende de frameworks, UI ou banco de dados
-- ✅ **Dependency Inversion**: Use cases dependem de abstrações (behaviours)
-- ✅ **Separação de responsabilidades**: Cada camada tem uma responsabilidade clara
-
-### SOLID
-
-- ✅ **SRP (Single Responsibility)**: Cada módulo tem uma única responsabilidade
-- ✅ **OCP (Open/Closed)**: Aberto para extensão, fechado para modificação
-- ✅ **LSP (Liskov Substitution)**: Implementações podem ser substituídas
-- ✅ **ISP (Interface Segregation)**: Interfaces focadas e mínimas
-- ✅ **DIP (Dependency Inversion)**: Dependências apontam para abstrações
-
-### DRY (Don't Repeat Yourself)
-
-- ✅ **BaseController**: Centraliza helpers de dependências
-- ✅ **VehicleFilter**: Centraliza lógica de filtragem
-- ✅ **ParamsNormalizer**: Centraliza normalização de parâmetros
 
 ## 🐳 Docker
 
@@ -360,10 +402,10 @@ O projeto inclui manifests Kubernetes completos para deploy em cluster.
 # Gere um secret key base
 mix phx.gen.secret
 
-# Edite k8s/secret.yaml e atualize:
-# - POSTGRES_PASSWORD
-# - SECRET_KEY_BASE
-# - DATABASE_URL
+Edite k8s/secret.yaml e atualize:
+- POSTGRES_PASSWORD
+- SECRET_KEY_BASE
+- DATABASE_URL
 ```
 
 2. **Aplique os manifests**:
@@ -380,11 +422,6 @@ kubectl get services -n auto-grand-premium-outlet
 Para mais detalhes, consulte [k8s/README.md](./k8s/README.md)
 
 ## 📚 Documentação
-
-### Arquitetura
-
-Consulte o relatório completo de arquitetura:
-- [ARCHITECTURE_REPORT_V2.md](./ARCHITECTURE_REPORT_V2.md)
 
 ### API
 
@@ -443,8 +480,10 @@ Este projeto está sob a licença MIT.
 
 ## 👥 Autora
 
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/8690168?v=4" width=115><br><sub>Nathalia Freire - RM359533</sub>](https://github.com/nathaliaifurita) |
+| :---: |
+
 - Desenvolvido seguindo Clean Architecture e SOLID principles
 
 ---
 
-**Nota**: Este projeto foi desenvolvido como exemplo de implementação de Clean Architecture e SOLID em Elixir/Phoenix. Para mais detalhes sobre a arquitetura, consulte [ARCHITECTURE_REPORT_V2.md](./ARCHITECTURE_REPORT_V2.md).
