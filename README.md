@@ -142,40 +142,6 @@ test/
 - ✅ **ParamsNormalizer**: Centraliza normalização de parâmetros de entrada (tipos, chaves, conversões).
 - ✅ **Serializers**: Reuso de lógica de transformação Domain → JSON entre endpoints.
 
-### Padrões de Código
-
-- Siga os princípios de Clean Architecture e SOLID descritos acima
-- Mantenha e amplie a cobertura de testes automatizados
-- Documente mudanças significativas (README, comentários e/ou docs)
-- Use `mix format` antes de commitar para manter o estilo consistente
-
-## 📦 Instalação
-
-### Pré-requisitos
-
-- Elixir ~> 1.12
-- Erlang/OTP 24+
-- PostgreSQL (opcional, usando in-memory storage por padrão)
-
-### Passos
-
-1. Clone o repositório:
-```bash
-git clone <repository-url>
-cd auto_grand_premium_outlet-1
-```
-
-2. Instale as dependências:
-```bash
-mix deps.get
-```
-
-3. Configure o banco de dados (opcional):
-```bash
-mix ecto.create
-mix ecto.migrate
-```
-
 ## ▶️ Executando o Projeto
 
 ### Docker Compose (Recomendado)
@@ -202,29 +168,6 @@ docker compose up -d
 Para parar:
 ```bash
 docker compose down
-```
-
-### Desenvolvimento Local
-
-```bash
-# Inicie o servidor Phoenix
-mix phx.server
-```
-
-O servidor estará disponível em `http://localhost:4000`
-
-### Swagger UI
-
-Acesse a documentação interativa da API em:
-```
-http://localhost:4000/swaggerui
-```
-
-### Dashboard
-
-Em ambiente de desenvolvimento, acesse o LiveDashboard em:
-```
-http://localhost:4000/dashboard
 ```
 
 ## 🧪 Testes
@@ -314,13 +257,12 @@ PAYMENT_CODE=$(echo $PAYMENT_RESPONSE | jq -r '.payment_code')
 echo "Payment Code: $PAYMENT_CODE"
 
 # 4. Confirmar o pagamento pelo webhooks
-WEBHOOKS_RESPONSE=$(curl -s -X PUT
-  http://localhost:4000/api/webhooks/payments \
-  -H 'Content-Type: application/json' \
+curl -X PUT "http://localhost:4000/api/webhooks/payments" \
+  -H "Content-Type: application/json" \
   -d "{
     \"payment_code\": \"$PAYMENT_CODE\",
-    \"status\": "paid"
-  }")
+    \"status\": \"paid\"
+  }" | jq .
 
 # 5. Verificar o pagamento atualizado
 curl -s "http://localhost:4000/api/payments/$PAYMENT_CODE" | jq '.status'
@@ -360,29 +302,23 @@ curl -X PUT "http://localhost:4000/api/vehicles/$VEHICLE_ID" \
 ### Webhook de Confirmação de Pagamento
 
 ```bash
-curl -X PUT http://localhost:4000/api/webhooks/payments \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "payment_code": "pay_456",
-    "status": "paid"
-  }'
+curl -X PUT "http://localhost:4000/api/webhooks/payments" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"payment_code\": \"$PAYMENT_CODE\",
+    \"status\": \"paid\"
+  }" | jq .
 ```
 
-## 🐳 Docker
-
-### Build da Imagem
+### Webhook de Confirmação de Pagamento
 
 ```bash
-docker build -t auto-grand-premium-outlet:1.0.3 .
-```
-
-### Executar Container
-
-```bash
-docker run -p 4000:4000 \
-  -e DATABASE_URL="ecto://postgres:postgres@host.docker.internal:5432/auto_grand_premium_outlet_prod" \
-  -e SECRET_KEY_BASE="your-secret-key-base" \
-  auto-grand-premium-outlet:1.0.3
+curl -X PUT "http://localhost:4000/api/webhooks/payments" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"payment_code\": \"$PAYMENT_CODE\",
+    \"status\": \"cancelled\"
+  }" | jq .
 ```
 
 ## ☸️ Kubernetes
@@ -393,7 +329,6 @@ O projeto inclui manifests Kubernetes completos para deploy em cluster.
 
 - Cluster Kubernetes configurado
 - `kubectl` instalado e configurado
-- Imagem Docker disponível no registry
 
 ### Deploy
 
@@ -451,32 +386,6 @@ Por padrão, o projeto usa **armazenamento em memória** (Elixir Agents) para fa
 - `AutoGrandPremiumOutlet.Infra.Repositories.PaymentRepo`
 
 Para usar PostgreSQL, configure o Ecto e atualize os repositórios conforme necessário.
-
-## ✅ Status do Projeto
-
-- ✅ Clean Architecture: **10/10**
-- ✅ SOLID Principles: **10/10**
-- ✅ Testes: **99 testes passando**
-- ✅ Documentação: **Completa**
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-### Padrões de Código
-
-- Siga os princípios de Clean Architecture e SOLID
-- Mantenha a cobertura de testes
-- Documente mudanças significativas
-- Use `mix format` antes de commitar
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
 
 ## 👥 Autora
 

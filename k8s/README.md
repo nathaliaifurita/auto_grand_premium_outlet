@@ -16,9 +16,7 @@ Este diretório contém todos os manifests Kubernetes necessários para implanta
 
 ### Pré-requisitos
 
-1. Cluster Kubernetes configurado e acessível
 2. `kubectl` configurado
-3. Imagem Docker da aplicação disponível no registry
 
 ### Passos
 
@@ -159,14 +157,4 @@ kubectl delete namespace auto-grand-premium-outlet
 - O **NodePort** expõe a aplicação na porta 30080
 - O **Ingress** é opcional e requer um Ingress Controller (ex: NGINX)
 
-## 🔒 Segurança
-
-⚠️ **IMPORTANTE**: Antes de fazer deploy em produção:
-
-1. Atualize todos os valores em `secret.yaml`
-2. Use secrets do Kubernetes ou um gerenciador de secrets (ex: Vault)
-3. Configure TLS/SSL no Ingress
-4. Revise as políticas de rede (NetworkPolicies)
-5. Configure ResourceQuotas e LimitRanges
-6. Use imagens de um registry privado
 
